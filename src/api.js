@@ -1,8 +1,9 @@
 
+const getJSON = (path, options) => 
+    fetch(path, options).then(res => res.json());
+
 const api = {
-    doThing() {
-        return 42;
-    }
+    getJSON
 }
 
 export default api;
