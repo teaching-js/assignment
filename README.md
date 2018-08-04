@@ -1,5 +1,18 @@
 # COMP2041 JavaScript Assignment (2041stagram)
 
+## Quickstart
+
+If you're using the NPM the following simple scripts are avalable to you to help 
+your development.
+
+```bash
+# run the development server
+npm run dev
+
+# run the linter
+npm run lint
+```
+
 ## Introduction
 
 JavaScript is used increasingly to provide a native-like application experience in the web. One 
