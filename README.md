@@ -25,18 +25,18 @@ Some of the skills/concepts this assignment aims to test (and build upon):
 * Routing (URL fragment based routing)
 
 ## API
-We can build API documentation using Swagger or Api Blueprint. 
+We can build API documentation using [Swagger](https://swagger.io/) or API Blueprint. 
 A simple express JS API server can be built that is provided to students to allow them to develop offline. It could also be hosted somewhere to ease development when online?
 
 TODO: Someone will need to build a API server to support all of this client side functionality.
 
 The following specification is a WIP and only includes some endpoints.
 
-```
+```json
 POST /login
 {
-  username: 'string',
-  password: 'string',
+  "username": "string",
+  "password": "string",
 }
 returns:
 
@@ -44,9 +44,9 @@ returns:
 403 for invalid credentials
 POST /signup
 {
-  displayName: 'string',
-  username: 'string',
-  password: 'string',
+  "displayName": "string",
+  "username": "string",
+  "password": "string",
 }
 returns
 
@@ -85,28 +85,28 @@ An option to register for "2041StaGram" is presented allowing the user to sign u
 The content shown in the user's feed is sourced from the backend.
 
 ## Level 2
-Level 2 focuses on a richer UX
+Level 2 focuses on a richer UX and will require some backend interaction.
 
-### Like user generated content
+### Like user generated content (Level 2)
 Users can interact with the content displayed in the feed. Users can like images shown in the feed.
 
-### "Post" new content
+### "Post" new content (Level 2)
 Users can upload and post new content on their profile and have it appear in other users feeds.
 
-### Pagination
+### Pagination (Level 2)
 Users can page between sets of results in the feed
 
-### Update Password
+### Update Password (Level 2)
 Users can change their password
 
 ## Level 3
 Level 3 focuses on more advanced features that will take time to implement and will 
 involve a more rigourously designed app to execute.
 
-### Infinite Scroll
+### Infinite Scroll (Level 3)
 Instead of pagination, users an infinitely scroll through results
 
-### Comments
+### Comments (Level 3)
 Users can write comments on "posts".
 
 ### Update Profile
