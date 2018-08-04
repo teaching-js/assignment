@@ -2,15 +2,34 @@
 
 ## Quickstart
 
-If you're using the NPM the following simple scripts are avalable to you to help 
+If you're using NPM the following simple scripts are avalable to you to help 
 your development.
 
 ```bash
-# run the development server
+# run the development server on port 8080
 npm run dev
 
-# run the linter
+# run the linter to check your js
 npm run lint
+```
+
+In addition we've provided a basic project scaffold for you to build from.
+You can use everything we've given you, although there's no requirement to use anything.
+```bash
+# scaffold
+data 
+  - feed.json  # A sample feed data object
+  - me.json    # A sample user/profile object
+  - post.json  # A sample post object
+
+src
+  - main.js   # The main entrypoint for your app
+  - api.js    # maybe for your api logic
+  - helper.js # some helper functions
+
+styles
+  - main.css  # where your css goes (add more stylesheets as you please)
+
 ```
 
 ## Introduction

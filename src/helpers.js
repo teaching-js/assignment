@@ -1,4 +1,8 @@
 
-const helper = () => 10
+const helper = () => 10;
 
-export { helper }
+// we can export like this 
+export { helper };
+
+// or like this
+export default helper;
