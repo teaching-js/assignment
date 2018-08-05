@@ -212,6 +212,23 @@ Deletes a specified post
 id : the post id of the post that is to be deleted
 ```
 
+> PUT `/post?id=xxx`
+
+Updates a specified post to match the given post object
+
+**Request**
+
+```
+id : the post id of the post that is to be deleted
+```
+
+```json
+{
+  "description_text": "string",
+  "src": "string"
+}
+```
+
 > GET `/post?id=xxx`
 
 Gets a post object by it's id
@@ -239,7 +256,7 @@ On successful Fetch
 }
 ```
 
-> PUT `/post/like?postId=13`
+> PUT `/post/like?id=13`
 
 Registers that the current logged in user "likes" the specified posts
 
@@ -264,7 +281,6 @@ id : id of the post the current logged in user wishes to comment on
   "comment": "string"
 }
 ```
-
 
 ## Milestones
 Level 0 focuses on the basic user interface and interaction building of the site.
@@ -365,6 +381,9 @@ This can be done as a modal or as a seperate page (url fragmentation can be impl
 Let a user follow/unfollow another user too add/remove their posts to their feed via `PUT user/follow`
 Add a list of everyone a user follows in their profile page.
 Add just the count of followers / follows to everyones public user page
+
+**Delete/Update Post**
+let a user update a post they made or delete it via `DELETE /post` or `PUT /post`
 
 ## Level 4
 Push Notifications
