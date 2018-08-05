@@ -5,16 +5,23 @@ html, body {
     padding: 0;
     background-color: #fafafa;
     height: 100%;
+    font-family: -apple-system, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
 .banner {
     display: flex;
     flex-direction: row;
+    flex-wrap: nowrap;
     justify-content: space-between;
+    align-items: center;
     padding: 10px;
     background-color:white;
     min-height: 60px;
     border-bottom: 1px solid rgba(0,0,0,.0975);
+}
+
+.banner > * {
+    margin: 10px 25px;
 }
 
 .nav {
@@ -23,23 +30,16 @@ html, body {
 }
 
 .nav-item {
-    background-color: #333;
+    background-color:black;
     margin: auto;
     padding: 5px;
     display: inline;
     list-style-type: none;
 }
 
-h1 {
-    margin: 10px 25px;
-    font-family: -apple-system, 'Open Sans', 'Helvetica Neue', sans-serif;
-}
-
 main {
-    border: 1px solid rgba(0,0,0,.0975);
     display: flex;
     max-width: 800px;
-    background-color: white;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
@@ -47,11 +47,40 @@ main {
     margin: 60px auto;
 }
 
-/* Add your styles here */
+#feed {
+    background-color: white;
+    border: 1px solid rgba(0,0,0,.0975);
+}
+
+#large-feed {
+    margin: 30px auto;
+    width: 100%;
+}
+
 .post {
+    max-width: 640px;
+    overflow: hidden;
+    margin: 30px 0;
+    background-color: white;
+    border: 1px solid rgba(0,0,0,.0975);
+}
+
+.post-title {
+    padding: 20px 40px;
+    margin: 0;
+    border-bottom: 1px solid rgba(0,0,0,.0975);
+}
+
+/* Add your styles here */
+.post-thumb {
     margin: 0;
     padding: 3px;
     width: 150px;
     height: 150px;
     border: 2px solid snow;
+}
+
+.post-image {
+    width: 640px;
+    height: 640px;
 }
