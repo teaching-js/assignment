@@ -208,7 +208,7 @@ _TODO: Decide if we are doing a file upload or just base64 encode the image_
 ```
 p : a number specifying where to begin fetching posts,
     the server will response with 10 posts from the feed in the range
-    [10*p,10*p+10). If not specified p is set to 0
+    [10*p,10*p+10). If not specified server will respond with ALL posts
 ```
 
 **Response**
