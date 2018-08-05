@@ -19,7 +19,7 @@ You can use everything we've given you, although there's no requirement to use a
 # scaffold
 data
   - feed.json  # A sample feed data object
-  - me.json    # A sample user/profile object
+  - users.json # A sample list of user/profile objects
   - post.json  # A sample post object
 
 src
@@ -60,13 +60,27 @@ Some of the skills/concepts this assignment aims to test (and build upon):
 We can build API documentation using [Swagger](https://swagger.io/) or API Blueprint.
 A simple express JS API server can be built that is provided to students to allow them to develop offline. It could also be hosted somewhere to ease development when online?
 
-TODO: Someone will need to build a API server to support all of this client side functionality.
+### Errors
 
-The following specification is a WIP and only includes some endpoints.
+Any endpoint can error with a `40x` error code which signals a issue with the request.
+See below
+
+```
+400 bad request (forgot a field, malformed request)
+401 not authorized (not logged in)
+403 forbidden (logged in, but not allowed to ser resource)
+```
+
+### End points
+
+#### Account Creation
 
 > POST `/login`
 
+Logs in a user and sets a cookie with a session token
+
 **Request**
+
 ```json
 {
   "username": "string",
@@ -74,26 +88,12 @@ The following specification is a WIP and only includes some endpoints.
 }
 ```
 
-**Response**
-`200` On successful login, sets a cookie with a session token
-```json
-{
-  "error": false,
-  "errorMsg": null
-}
-```
-
-`403` for invalid credentials
-```json
-{
-  "error": true,
-  "errorMsg": "Invalid Credentials"
-}  
-```
-
 > POST `/signup`
 
+Signs up a user for the service and sets a cookie with a session token
+
 **Request**
+
 ```json
 {
   "email": "string",
@@ -101,198 +101,16 @@ The following specification is a WIP and only includes some endpoints.
   "password": "string",
 }
 ```
-**Response**
-`200` On successful signup, sets a cookie with a session token
-```json
-{
-  "error": false,
-  "errorMsg": null
-}
-```
 
-`403` for existent username
-```json
-{
-  "error": true,
-  "errorMsg": "Username Already In Use"
-}  
-```
+#### User functions
 
-> PUT `/post/like?postId=13`
+> GET `/user`
 
-**Request**
-```
-postId : Id of the post the current logged in user wishes to like
-```
+gets a user object for the current logged in user
 
 **Response**
-`200` On successful like
-```json
-{
-  "error": false,
-  "errorMsg": null
-}
-```
 
-`403` for Non Existent post or user not logged in
-```json
-{
-  "error": true,
-  "errorMsg": "You Are Not Logged In | Invalid Post Id"
-}  
-```
-
-
-> PUT `/post/comment`
-
-**Request**
-
-```json
-{
-  "postId": "integer",
-  "text": "string"
-}
-```
-
-**Response**
-`200` On successful comment
-```json
-{
-  "error": false,
-  "errorMsg": ""
-}
-```
-
-`403` for user is not logged in or invalid post id
-```json
-{
-  "error": true,
-  "errorMsg": "You Are Not Logged In | Invalid Post Id"
-}  
-```
-
-> POST `/post/new`
-
-**Request**
-```json
-{
-  "description_text": "string",
-  "src": "string"
-}
-```
-
-_TODO: Decide if we are doing a file upload or just base64 encode the image_
-
-**Response**
-`200` On successful Post
-```json
-{
-  "error": false,
-  "errorMsg": ""
-}
-```
-
-`403` for user is not logged in or image/description invalid
-```json
-{
-  "error": true,
-  "errorMsg": "You Are Not Logged In | Invalid Description | Invalid Image"
-}  
-```
-
-
-> GET `/user/feed?p=17`
-
-**Request**
-
-```
-p : a number specifying where to begin fetching posts,
-    the server will response with 10 posts from the feed in the range
-    [10*p,10*p+10). If not specified server will respond with ALL posts
-```
-
-**Response**
-`200` On successful fetch
-```json
-[
-  {
-      "id": 1,
-      "meta": {
-          "author": "Nina",
-          "description_text": "My lounge",
-          "published": "Sat Aug 04 2018 20:19:12 GMT+1000 (Australian Eastern Standard Time)",
-          "likes": []
-      },
-      "thumbnail": "man-small.jpg",
-      "src": "man.jpg"
-  },
-  "..."
-]
-```
-
-`403` for invalid position token or non logged in user
-```json
-{
-  "error": true,
-  "errorMsg": "You Are Not Logged In | Invalid Position Number"
-}  
-```
-
-> PUT `/user/follow?username=barry`
-
-**Request**
-
-```
-username: username of the user the logged in user wishes to follow
-```
-
-**Response**
-`200` On successful Follow
-```json
-{
-  "error": false,
-  "errorMsg": null
-}
-```
-
-`403` for invalid username or user is not logged in
-```json
-{
-  "error": true,
-  "errorMsg": "You Are Not Logged In | Invalid Username"
-}  
-```
-
-
-> PUT `/user/unfollow?username=barry`
-
-**Request**
-
-```
-username: username of the user the logged in user wishes to unfollow
-```
-
-**Response**
-`200` On successful UnFollow
-```json
-{
-  "error": false,
-  "errorMsg": null
-}
-```
-
-`403` for invalid username or user is not logged in
-```json
-{
-  "error": true,
-  "errorMsg": "You Are Not Logged In | Invalid Username"
-}  
-```
-
-> GET `/user/info`
-
-**Response**
-`200` On successful fetch
+On successful fetch
 ```json
 {
   "username": "baz",
@@ -302,15 +120,9 @@ username: username of the user the logged in user wishes to unfollow
 }
 ```
 
-`403` for user is not logged in
-```json
-{
-  "error": true,
-  "errorMsg": "You Are Not Logged In"
-}  
-```
+> PUT `/user`
 
-> PUT `/user/update`
+Updates the current logged in user to match the given user object.
 
 **Request**
 
@@ -322,21 +134,135 @@ username: username of the user the logged in user wishes to unfollow
 }
 ```
 
+> GET `/user/feed?p=17`
+
+Retrieves a set of posts from the currently logged in users feed
+
+**Request**
+
+```
+p : a number specifying where to begin fetching posts,
+    the server will response with 10 posts from the feed in the range
+    [10*p,10*p+10). If not specified server will respond with ALL posts
+```
+
 **Response**
-`200` On successful update
+
+On successful fetch
+```json
+[
+  {
+      "id": "Integer",
+      "meta": {
+          "author": "String",
+          "description_text": "String",
+          "published": "String",
+          "likes": ["String","..."]
+      },
+      "thumbnail": "String",
+      "src": "String"
+  },
+  "..."
+]
+```
+
+> PUT `/user/follow?username=barry`
+
+Adds the specified user to the list of users that the current logged in user follows
+
+**Request**
+
+```
+username: username of the user that is to be followed
+```
+
+> PUT `/user/unfollow?username=barry`
+
+Removed the specified user from list of users that the current logged in user follows
+
+**Request**
+
+```
+username: username of the user the logged in user wishes to unfollow
+```
+
+#### Post Functions
+
+
+> POST `/post`
+
+Creates a new post under the current logged in user
+
+**Request**
+
 ```json
 {
-  "error": false,
-  "errorMsg": ""
+  "description_text": "string",
+  "src": "string"
 }
 ```
 
-`403` for user is not logged in
+> DELETE `/post?id=xxx`
+
+Deletes a specified post
+
+**Request**
+
+```
+id : the post id of the post that is to be deleted
+```
+
+> GET `/post?id=xxx`
+
+Gets a post object by it's id
+
+**Request**
+
+```
+id : the post id of the post that is to be fetched
+```
+
+**Response**
+
+On successful Fetch
 ```json
 {
-  "error": true,
-  "errorMsg": "You Are Not Logged In"
-}  
+    "id": "Integer",
+    "meta": {
+        "author": "String",
+        "description_text": "String",
+        "published": "String",
+        "likes": ["String","..."]
+    },
+    "thumbnail": "String",
+    "src": "String"
+}
+```
+
+> PUT `/post/like?postId=13`
+
+Registers that the current logged in user "likes" the specified posts
+
+**Request**
+
+```
+id : Id of the post the current logged in user wishes to like
+```
+
+> POST `/post/comment?id=12`
+
+Registers a new comment from current logged in user on the specified post
+
+**Request**
+
+```
+id : id of the post the current logged in user wishes to comment on
+```
+
+```json
+{
+  "comment": "string"
+}
 ```
 
 
@@ -375,13 +301,13 @@ Each post must include
 Level 1 focuses on fetching data from the API.
 
 **Login**
-The site presents a login form and verifies the provided credentials with the backend (`/login`). Once logged in, the user can see the home page.
+The site presents a login form and verifies the provided credentials with the backend (`POST /login`). Once logged in, the user can see the home page.
 
 **Registration**
-An option to register for "2041StaGram" is presented allowing the user to sign up to the service. The user information is POSTed to the backend to create the user in the database. (`/signup`)
+An option to register for "2041StaGram" is presented allowing the user to sign up to the service. The user information is POSTed to the backend to create the user in the database. (`POST /signup`)
 
 **Feed Interface**
-The content shown in the user's feed is sourced from the backend. (`/user/feed`)
+The content shown in the user's feed is sourced from the backend. (`GET /user/feed`)
 
 ## Level 2
 Level 2 focuses on a richer UX and will require some backend interaction.
@@ -395,18 +321,18 @@ Allow an option for a user to see all the comments on a post.
 same as above.
 
 **Like user generated content**
-A logged in user can like a post on their feed and trigger a api request `/post/like`
+A logged in user can like a post on their feed and trigger a api request `PUT /post/like`
 For now it's ok if the like doesn't show up until the page is refreshed.
 
 **"Post" new content**
-Users can upload and post new content from a modal or seperate page via `/post/new`
+Users can upload and post new content from a modal or seperate page via `POST /post`
 
 **Pagination**
-Users can page between sets of results in the feed using the position token from `user/feed`
+Users can page between sets of results in the feed using the position token with `GET user/feed`
 
 **Profile**
 Users can see their own profile information such as username, number of posts, number of likes, profile pic.
-get this information from `/user/info`
+get this information from `GET /user`
 
 ## Level 3
 Level 3 focuses on more advanced features that will take time to implement and will
@@ -416,14 +342,14 @@ involve a more rigourously designed app to execute.
 Instead of pagination, users an infinitely scroll through results
 
 **Comments**
-Users can write comments on "posts" via `post/comment`
+Users can write comments on "posts" via `POST post/comment`
 
 **Live Update**
 If a user likes a post or comments on a post, the posts likes and comments should
 update without requiring a page reload/refresh.
 
 **Update Profile**
-Users can update their personal profile via `/user/update` E.g:
+Users can update their personal profile via `PUT /user` E.g:
 * Update email address
 * Update their profile picture
 * Update password
@@ -436,7 +362,7 @@ The user should be able to see their own page as well.
 This can be done as a modal or as a seperate page (url fragmentation can be implemented if wished.)
 
 **Follow**
-Let a user follow/unfollow another user too add/remove their posts to their feed via `user/follow`
+Let a user follow/unfollow another user too add/remove their posts to their feed via `PUT user/follow`
 Add a list of everyone a user follows in their profile page.
 Add just the count of followers / follows to everyones public user page
 
