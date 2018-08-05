@@ -13,7 +13,7 @@ feed
 .then(posts => {
     posts.reduce((parent, post) => {
         const img = createElement('img', null, 
-            { src: 'images/'+post.thumbnail, alt: post.meta.description_text, class: 'post-thumb' });
+            { src: 'https://teaching-vue.github.io/assignment/images/'+post.thumbnail, alt: post.meta.description_text, class: 'post-thumb' });
         parent.appendChild(img);
         return parent;
 
@@ -26,9 +26,8 @@ feed
         const section = createElement('section', null, { class: 'post' });
         section.appendChild(createElement('h2', post.meta.author, { class: 'post-title' }))
         section.appendChild(createElement('img', null, 
-        { src: 'images/'+post.src, alt: post.meta.description_text, class: 'post-image' }))
+        { src: 'https://teaching-vue.github.io/assignment/images/'+post.src, alt: post.meta.description_text, class: 'post-image' }))
         parent.appendChild(section)
         return parent;
     }, document.getElementById('large-feed'))
-    posts.map(console.log);
 });

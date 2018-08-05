@@ -1,5 +1,5 @@
 // change this when you integrate with the real API
-const API_URL = '/data'
+const API_URL = 'https://teaching-vue.github.io/assignment/data'
 
 const getJSON = (path, options) => 
     fetch(path, options).then(res => res.json());
