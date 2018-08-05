@@ -1,5 +1,5 @@
 // change this when you integrate with the real API
-const API_URL = 'http://127.0.0.1:8080/data'
+const API_URL = '/data'
 
 const getJSON = (path, options) => 
     fetch(path, options).then(res => res.json());
