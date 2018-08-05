@@ -201,14 +201,14 @@ _TODO: Decide if we are doing a file upload or just base64 encode the image_
 ```
 
 
-> GET `/user/feed?numItems=10&position=17`
+> GET `/user/feed?p=17`
 
 **Request**
 
 ```
-numItems : integer denoting number of posts needed, 10 if numItems is not specified
-position : a position token specifying where to begin fetching posts
-           from in the users timeline. if not set grabs latest posts
+p : a number specifying where to begin fetching posts,
+    the server will response with 10 posts from the feed in the range
+    [10*p,10*p+10). If not specified p is set to 0
 ```
 
 **Response**
@@ -234,7 +234,7 @@ position : a position token specifying where to begin fetching posts
 ```json
 {
   "error": true,
-  "errorMsg": "You Are Not Logged In | Invalid Position Token"
+  "errorMsg": "You Are Not Logged In | Invalid Position Number"
 }  
 ```
 
