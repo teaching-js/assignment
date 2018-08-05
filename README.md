@@ -66,6 +66,7 @@ The following specification is a WIP and only includes some endpoints.
 
 > POST `/login`
 
+**Request**
 ```json
 {
   "username": "string",
@@ -73,96 +74,79 @@ The following specification is a WIP and only includes some endpoints.
 }
 ```
 
-returns:
-  - `200` OK for successful login, sets a cookie with a session token
-  - `403` for invalid credentials
+**Response**
+`200` On successful login, sets a cookie with a session token
+```json
+{
+  "error": false,
+  "errorMsg": null
+}
+```
 
+`403` for invalid credentials
+```json
+{
+  "error": true,
+  "errorMsg": "Invalid Credentials"
+}  
+```
 
 > POST `/signup`
 
+**Request**
 ```json
 {
+  "email": "string",
   "displayName": "string",
   "username": "string",
   "password": "string",
 }
 ```
-
-> POST `/feed`
-
+**Response**
+`200` On successful signup, sets a cookie with a session token
 ```json
 {
-  "numItems": "integer",
-  "position": "string or null"
+  "error": false,
+  "errorMsg": null
 }
 ```
 
-returns:
-  - `200` OK for successful fetch, returns a list of feed items and a position token.
-    - position token allows a client to request 10 more posts from the last post requested onwards.
-  - `403` if user not logged in or invalid position supplied
-
-> POST `/like`
-
+`403` for existent username
 ```json
 {
-  "postId": "integer"
+  "error": true,
+  "errorMsg": "Username Already In Use"
+}  
+```
+
+> PUT `/post/like?postId=13`
+
+**Request**
+```
+postId : Id of the post the current logged in user wishes to like
+```
+
+**Response**
+`200` On successful like
+```json
+{
+  "error": false,
+  "errorMsg": null
 }
 ```
 
-returns:
-  - `200` OK for successful like
-  - `403` if user not logged in or postId supplied is invalid
-
-> POST `/follow`
-
+`403` for Non Existent post or user not logged in
 ```json
 {
-  "username": "string"
-}
+  "error": true,
+  "errorMsg": "You Are Not Logged In | Invalid Post Id"
+}  
 ```
 
-returns:
-  - `200` OK for successful follow
-  - `403` if user not logged in or supplied username invalid
 
-> POST `/unfollow`
+> PUT `/post/comment`
 
-```json
-{
-  "username": "string"
-}
-```
-
-returns:
-  - `200` OK for successful unfollow
-  - `403` if user not logged in or supplied username invalid or currently unfollowed
-
-
-> POST `/user/info`
-
-```json
-{}
-```
-
-returns:
-  - `200` OK for successful user info fetch, returns the user info object
-  - `403` if user not logged in
-
-
-> POST `/user/update`
-
-```json
-{
-  ...TBA user object
-}
-```
-
-returns:
-  - `200` OK for successful update, matches db version of user with supplied user object
-  - `403` if user not logged in or supplied update values invalid
-
-> POST `/comment`
+**Request**
 
 ```json
 {
@@ -171,9 +155,191 @@ returns:
 }
 ```
 
-returns:
-  - `200` OK for successful comment of "text" on post "postId"
-  - `403` if user not logged in or supplied postId invalid or "text" too long/is empty string
+**Response**
+`200` On successful comment
+```json
+{
+  "error": false,
+  "errorMsg": ""
+}
+```
+
+`403` for user is not logged in or invalid post id
+```json
+{
+  "error": true,
+  "errorMsg": "You Are Not Logged In | Invalid Post Id"
+}  
+```
+
+> POST `/post/new`
+
+**Request**
+```json
+{
+  "description_text": "string",
+  "src": "string"
+}
+```
+
+_TODO: Decide if we are doing a file upload or just base64 encode the image_
+
+**Response**
+`200` On successful Post
+```json
+{
+  "error": false,
+  "errorMsg": ""
+}
+```
+
+`403` for user is not logged in or image/description invalid
+```json
+{
+  "error": true,
+  "errorMsg": "You Are Not Logged In | Invalid Description | Invalid Image"
+}  
+```
+
+
+> GET `/user/feed?numItems=10&position=abc`
+
+**Request**
+
+```
+numItems : integer denoting number of posts needed
+position : a position token specifying where to begin fetching posts
+           from in the users timeline. set to null for latest posts
+```
+
+**Response**
+`200` On successful fetch
+```json
+[
+  {
+      "id": 1,
+      "meta": {
+          "author": "Nina",
+          "description_text": "My lounge",
+          "published": "Sat Aug 04 2018 20:19:12 GMT+1000 (Australian Eastern Standard Time)",
+          "likes": []
+      },
+      "thumbnail": "man-small.jpg",
+      "src": "man.jpg"
+  },
+  "..."
+]
+```
+
+`403` for invalid position token or non logged in user
+```json
+{
+  "error": true,
+  "errorMsg": "You Are Not Logged In | Invalid Position Token"
+}  
+```
+
+> PUT `/user/follow?username=barry`
+
+**Request**
+
+```
+username: username of the user the logged in user wishes to follow
+```
+
+**Response**
+`200` On successful Follow
+```json
+{
+  "error": false,
+  "errorMsg": null
+}
+```
+
+`403` for invalid username or user is not logged in
+```json
+{
+  "error": true,
+  "errorMsg": "You Are Not Logged In | Invalid Username"
+}  
+```
+
+
+> PUT `/user/unfollow?username=barry`
+
+**Request**
+
+```
+username: username of the user the logged in user wishes to unfollow
+```
+
+**Response**
+`200` On successful UnFollow
+```json
+{
+  "error": false,
+  "errorMsg": null
+}
+```
+
+`403` for invalid username or user is not logged in
+```json
+{
+  "error": true,
+  "errorMsg": "You Are Not Logged In | Invalid Username"
+}  
+```
+
+> GET `/user/info`
+
+**Response**
+`200` On successful fetch
+```json
+{
+  "username": "baz",
+  "name": "Barry",
+  "id"  : 1,
+  "posts": [1]
+}
+```
+
+`403` for user is not logged in
+```json
+{
+  "error": true,
+  "errorMsg": "You Are Not Logged In"
+}  
+```
+
+> PUT `/user/update`
+
+**Request**
+
+```json
+{
+  "name": "String",
+  "password": "String",
+  "..."
+}
+```
+
+**Response**
+`200` On successful update
+```json
+{
+  "error": false,
+  "errorMsg": ""
+}
+```
+
+`403` for user is not logged in
+```json
+{
+  "error": true,
+  "errorMsg": "You Are Not Logged In"
+}  
+```
+
 
 ## Milestones
 Level 0 focuses on the basic user interface and interaction building of the site.
@@ -216,7 +382,7 @@ The site presents a login form and verifies the provided credentials with the ba
 An option to register for "2041StaGram" is presented allowing the user to sign up to the service. The user information is POSTed to the backend to create the user in the database. (`/signup`)
 
 **Feed Interface**
-The content shown in the user's feed is sourced from the backend. (`/feed`)
+The content shown in the user's feed is sourced from the backend. (`/user/feed`)
 
 ## Level 2
 Level 2 focuses on a richer UX and will require some backend interaction.
@@ -230,14 +396,14 @@ Allow an option for a user to see all the comments on a post.
 same as above.
 
 **Like user generated content**
-A logged in user can like a post on their feed and trigger a api request `/like`
+A logged in user can like a post on their feed and trigger a api request `/post/like`
 For now it's ok if the like doesn't show up until the page is refreshed.
 
 **"Post" new content**
-Users can upload and post new content from a modal or seperate page via `/`
+Users can upload and post new content from a modal or seperate page via `/post/new`
 
 **Pagination**
-Users can page between sets of results in the feed using the position token from `/feed`
+Users can page between sets of results in the feed using the position token from `user/feed`
 
 **Profile**
 Users can see their own profile information such as name, username, number of posts, number of likes, profile pic.
@@ -251,7 +417,7 @@ involve a more rigourously designed app to execute.
 Instead of pagination, users an infinitely scroll through results
 
 **Comments**
-Users can write comments on "posts" via `/comment`
+Users can write comments on "posts" via `post/comment`
 
 **Live Update**
 If a user likes a post or comments on a post, the posts likes and comments should
@@ -272,7 +438,7 @@ The user should be able to see their own page as well.
 This can be done as a modal or as a seperate page (url fragmentation can be implemented if wished.)
 
 **Follow**
-Let a user follow/unfollow another user too add/remove their posts to their feed via `/follow` or `/unfollow`
+Let a user follow/unfollow another user too add/remove their posts to their feed via `user/follow`
 Add a list of everyone a user follows in their profile page.
 Add just the count of followers / follows to everyones public user page
 
