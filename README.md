@@ -97,7 +97,6 @@ The following specification is a WIP and only includes some endpoints.
 ```json
 {
   "email": "string",
-  "displayName": "string",
   "username": "string",
   "password": "string",
 }
@@ -202,14 +201,14 @@ _TODO: Decide if we are doing a file upload or just base64 encode the image_
 ```
 
 
-> GET `/user/feed?numItems=10&position=abc`
+> GET `/user/feed?numItems=10&position=17`
 
 **Request**
 
 ```
-numItems : integer denoting number of posts needed
+numItems : integer denoting number of posts needed, 10 if numItems is not specified
 position : a position token specifying where to begin fetching posts
-           from in the users timeline. set to null for latest posts
+           from in the users timeline. if not set grabs latest posts
 ```
 
 **Response**
@@ -406,7 +405,7 @@ Users can upload and post new content from a modal or seperate page via `/post/n
 Users can page between sets of results in the feed using the position token from `user/feed`
 
 **Profile**
-Users can see their own profile information such as name, username, number of posts, number of likes, profile pic.
+Users can see their own profile information such as username, number of posts, number of likes, profile pic.
 get this information from `/user/info`
 
 ## Level 3
@@ -426,7 +425,6 @@ update without requiring a page reload/refresh.
 **Update Profile**
 Users can update their personal profile via `/user/update` E.g:
 * Update email address
-* Change display name
 * Update their profile picture
 * Update password
 
