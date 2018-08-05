@@ -1,6 +1,57 @@
+
+/* base styles, feel free to edit */
 html, body {
     margin: 0;
     padding: 0;
+    background-color: #fafafa;
+    height: 100%;
+}
+
+.banner {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 10px;
+    background-color:white;
+    min-height: 60px;
+    border-bottom: 1px solid rgba(0,0,0,.0975);
+}
+
+.nav {
+    list-style-type: none;
+    padding: 0;
+}
+
+.nav-item {
+    background-color: #333;
+    margin: auto;
+    padding: 5px;
+    display: inline;
+    list-style-type: none;
+}
+
+h1 {
+    margin: 10px 25px;
+    font-family: -apple-system, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+main {
+    border: 1px solid rgba(0,0,0,.0975);
+    display: flex;
+    max-width: 800px;
+    background-color: white;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    margin: 60px auto;
 }
 
 /* Add your styles here */
+.post {
+    margin: 0;
+    padding: 3px;
+    width: 150px;
+    height: 150px;
+    border: 2px solid snow;
+}

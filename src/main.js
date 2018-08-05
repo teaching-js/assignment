@@ -1,13 +1,18 @@
 // importing named exports we use brackets
-import { range, createElement, randomColor } from './helpers.js';
+import { createElement } from './helpers.js';
 
 // when importing 'default' exports, use below syntax
-// import API from './api.js';
+import API from './api.js';
 
-range(20).reduce((el) => {
-    const p = createElement('p', 'hi', { title: 'text', class: 'post', style: `background-color: ${randomColor()}` });
-    el.appendChild(p);
-    return el;
-}, document.querySelector('main'));
+const api  = new API();
 
-// API.doThing();
+api.getFeed()
+.then(posts => {
+    posts.reduce((parent, post) => {
+        const img = createElement('img', null, 
+            { src: 'images/'+post.thumbnail, alt: post.meta.description_text, class: 'post' });
+        parent.appendChild(img);
+        return parent;
+
+    }, document.getElementById('feed'));
+});
