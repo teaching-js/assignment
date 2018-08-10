@@ -28,7 +28,7 @@ footer {
     text-align: right;
 }
 
-.banner > * {
+.banner > *, footer > * {
     margin: 10px 25px;
 }
 
