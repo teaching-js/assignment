@@ -24,6 +24,9 @@ class TestAppLogin(BasicSetUp):
         r = {u'username':'test',u'password':'1234'}
         result = self.simulate_post('/login',json=r)
         self.assertEqual(result.status_code, 200)
+        self.assertNotEqual(result.cookies.get("session"),None)
+        c = result.cookies.get("session").value
+        self.assertEqual(len(c),64)
 
 
 if __name__ == '__main__':
