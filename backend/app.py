@@ -7,3 +7,4 @@ class App:
         self.db = sqlite3.connect(db_url)
         self.api = falcon.API()
         self.api.add_route('/login', Login(self.db))
+        self.api.add_route('/signup', Signup(self.db))

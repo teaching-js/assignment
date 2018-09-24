@@ -28,6 +28,11 @@ class TestAppLogin(BasicSetUp):
         c = result.cookies.get("session").value
         self.assertEqual(len(c),64)
 
+class TestAppSignup(BasicSetUp):
+    def test_signup_get(self):
+        result = self.simulate_get('/signup')
+        self.assertEqual(result.status_code, 405)
+
 
 if __name__ == '__main__':
     unittest.main()
