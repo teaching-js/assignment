@@ -11,7 +11,7 @@ auth = api.namespace('auth', description='Authentication Services')
 user = api.namespace('user', description='User Information Services')
 db = DB()
 
-user_details = api.model('Test', {
+login_details = api.model('login_details', {
   'username': fields.String(required=True, example='greg'),
   'password': fields.String(required=True, example='1234'),
 })
@@ -33,7 +33,7 @@ class Login(Resource):
     @auth.response(200, 'Success')
     @auth.response(400, 'Missing Username/Password')
     @auth.response(405, 'Invalid Username/Password')
-    @api.expect(user_details)
+    @api.expect(login_details)
     def post(self):
         (un,ps) = unpack(request.json,"username","password")
         if not db.exists("USER").where(username=un,password=ps):
@@ -46,22 +46,19 @@ class Login(Resource):
             "token": t
         }
 
-@user.route('/user')
+@user.route('/')
 class User(Resource):
+    @user.response(200, 'Success')
+    @auth.response(405, 'Invalid Authorization Token')
     def get(self):
         t = request.headers.get('Authorization',None)
         if not t:
-            abort(400)
+            abort(405)
         t = t.split(" ")[1]
         u = db.select("USER").where(curr_token=t).execute()
         return {
             "username": u[0]
         }
-
-# base
-@app.route("/")
-def index():
-    return render_template("index.html")
 
 
 if __name__ == "__main__":
