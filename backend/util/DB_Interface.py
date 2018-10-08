@@ -22,7 +22,13 @@ class Stub:
             self.q += " WHERE {}".format(" AND ".join(search_params))
         self.q_values += tuple(kargs.values())
         return self
-
+    def with_values(self, **kargs):
+        keys = ",".join(kargs.keys())
+        values = [kargs[k] for k in kargs.keys()]
+        ph = ",".join(["?" for k in kargs.keys()])
+        self.q += "({}) VALUES({})".format(keys,ph);
+        self.q_values += tuple(values)
+        return self
     def execute(self):
         c = self.conn.cursor()
         # since the last python update we can now
@@ -33,7 +39,7 @@ class Stub:
             r = (c.fetchone() != None)
             self.conn.close()
             return r
-        elif (self.type == "UPDATE"):
+        elif (self.type == "UPDATE" or self.type == "INSERT"):
             self.conn.commit()
             r = None
             self.conn.close()
@@ -65,9 +71,15 @@ class DB:
         self.select_queries = {
             "USER" : "SELECT USERNAME FROM USERS"
         }
+        self.insert_queries = {
+            "USER" : "INSERT INTO USERS"
+        }
 
     def exists(self, query_name, **kargs):
         s = Stub(self.conn_url, "EXISTS", self.exist_queries[query_name])
+        return s
+    def insert(self, query_name, **kargs):
+        s = Stub(self.conn_url, "INSERT", self.insert_queries[query_name])
         return s
     def select(self, query_name, **kargs):
         s = Stub(self.conn_url, "SELECT", self.select_queries[query_name])
