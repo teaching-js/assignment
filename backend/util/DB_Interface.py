@@ -27,6 +27,7 @@ class Stub:
         c = self.conn.cursor()
         # since the last python update we can now
         # assume kargs are ordered :D
+        print(self.q,self.q_values)
         c.execute(self.q,self.q_values)
         if (self.type == "EXISTS"):
             r = (c.fetchone() != None)
@@ -35,6 +36,14 @@ class Stub:
         elif (self.type == "UPDATE"):
             self.conn.commit()
             r = None
+            self.conn.close()
+            return r
+        elif (self.type == "SELECT"):
+            r = c.fetchone()
+            self.conn.close()
+            return r
+        elif (self.type == "SELECT_ALL"):
+            r = c.fetchall()
             self.conn.close()
             return r
         raise Exception("Unknown Stub type '{}'".format(self.type))
@@ -53,9 +62,18 @@ class DB:
         self.update_queries = {
             "USER" : "UPDATE USERS"
         }
+        self.select_queries = {
+            "USER" : "SELECT USERNAME FROM USERS"
+        }
 
     def exists(self, query_name, **kargs):
         s = Stub(self.conn_url, "EXISTS", self.exist_queries[query_name])
+        return s
+    def select(self, query_name, **kargs):
+        s = Stub(self.conn_url, "SELECT", self.select_queries[query_name])
+        return s
+    def select_all(self, query_name, **kargs):
+        s = Stub(self.conn_url, "SELECT_ALL", self.select_queries[query_name])
         return s
     def update(self, query_name, **kargs):
         s = Stub(self.conn_url, "UPDATE", self.update_queries[query_name])
