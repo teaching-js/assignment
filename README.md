@@ -77,7 +77,11 @@ See below
 
 > POST `/login`
 
-Logs in a user and sets a cookie with a session token
+Logs in a user and returns a auth token, all subsequenct requests should put this token into the headers as such 
+
+```
+Authorization: Token <AUTH_TOKEN>
+```
 
 **Request**
 
