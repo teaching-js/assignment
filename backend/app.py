@@ -15,12 +15,15 @@ login_details = api.model('login_details', {
   'username': fields.String(required=True, example='greg'),
   'password': fields.String(required=True, example='1234'),
 })
-signup_details = api.model('login_details', {
+auth_details = api.model('auth_details', {
+  'Authorization': fields.String(required=True, example='Token 1234'),
+},location='headers')
+signup_details = api.model('signup_details', {
   'username': fields.String(required=True, example='greg'),
   'password': fields.String(required=True, example='1234'),
   'email': fields.String(required=True, example='greg@fred.com')
 })
-
+auth_details = api.parser().add_argument('Authorization', location='headers')
 # Globals
 def unpack(j,*args,**kargs):
     r = [j.get(arg,None) for arg in args]
@@ -83,7 +86,8 @@ class Signup(Resource):
 @user.route('/')
 class User(Resource):
     @user.response(200, 'Success')
-    @auth.response(405, 'Invalid Authorization Token')
+    @user.response(405, 'Invalid Authorization Token')
+    @api.expect(auth_details)
     def get(self):
         t = request.headers.get('Authorization',None)
         if not t:
