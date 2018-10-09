@@ -42,9 +42,9 @@ class Stub:
             r = (c.fetchone() != None)
             self.conn.close()
             return r
-        elif (self.type == "UPDATE" or self.type == "INSERT"):
+        elif (self.type == "UPDATE" or self.type == "INSERT" or self.type == "DELETE"):
             self.conn.commit()
-            r = None
+            r = c.lastrowid
             self.conn.close()
             return r
         elif (self.type == "SELECT"):
@@ -66,20 +66,35 @@ class DB:
     def __init__(self):
         self.conn_url = "db/test.sqlite3"
         self.exist_queries = {
-            "USER" : "SELECT USERNAME FROM USERS"
+            "USER" : "SELECT USERNAME FROM USERS",
+            "POST": "SELECT ID FROM POSTS",
+            "COMMENT": "SELECT ID FROM COMMENTS"
         }
         self.update_queries = {
-            "USER" : "UPDATE USERS"
+            "USER" : "UPDATE USERS",
+            "POST": "UPDATE POSTS",
+            "COMMENT": "UPDATE COMMENTS"
         }
         self.select_queries = {
-            "USER" : "SELECT ID,USERNAME,NAME,EMAIL,FOLLOWING FROM USERS"
+            "USER" : "SELECT ID,USERNAME,NAME,EMAIL,FOLLOWING FROM USERS",
+            "POST": "SELECT * FROM POSTS",
+            "COMMENT": "SELECT * FROM COMMENTS"
         }
         self.insert_queries = {
-            "USER" : "INSERT INTO USERS"
+            "USER" : "INSERT INTO USERS",
+            "POST": "INSERT INTO POSTS",
+            "COMMENT": "INSERT INTO COMMENTS"
         }
-
+        self.delete_queries = {
+            "USER": "DELETE FROM USERS",
+            "POST": "DELETE FROM POSTS",
+            "COMMENT": "DELETE FROM COMMENTS"
+        }
     def exists(self, query_name, **kargs):
         s = Stub(self.conn_url, "EXISTS", self.exist_queries[query_name])
+        return s
+    def delete(self, query_name, **kargs):
+        s = Stub(self.conn_url, "DELETE", self.delete_queries[query_name])
         return s
     def insert(self, query_name, **kargs):
         s = Stub(self.conn_url, "INSERT", self.insert_queries[query_name])
