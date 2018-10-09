@@ -3,11 +3,11 @@
 ## Quickstart
 
 If you're using NPM the following simple scripts are avalable to you to help
-your development.
+your development. This is before you start using the dev server directly.
 
 ```bash
 # run the development server on port 8080
-npm run dev
+npm start
 
 # run the linter to check your js
 npm run lint
@@ -24,11 +24,11 @@ data
 
 src
   - main.js   # The main entrypoint for your app
-  - api.js    # maybe for your api logic
-  - helper.js # some helper functions
+  - api.js    # Some example code for your api logic
+  - helper.js # Some helper functions, which you don't need to use
 
 styles
-  - main.css  # where your css goes (add more stylesheets as you please)
+  - provided.css  # some sample css we've provided goes (add more stylesheets as you please)
 ```
 
 ## Introduction
@@ -56,8 +56,9 @@ Some of the skills/concepts this assignment aims to test (and build upon):
 * Routing (URL fragment based routing)
 
 ## API
-We can build API documentation using [Swagger](https://swagger.io/) or API Blueprint.
-A simple express JS API server can be built that is provided to students to allow them to develop offline. It could also be hosted somewhere to ease development when online?
+The backend is the API. Don't touch the backend; although we've provided the source, it's meant to be a
+black box. Final testing will be done with our own backend. Use the instructions provided in the README.md
+to get it started.
 
 ### Errors
 
