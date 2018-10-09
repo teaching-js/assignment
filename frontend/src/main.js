@@ -1,5 +1,5 @@
 // importing named exports we use brackets
-import { createElement } from './helpers.js';
+import { createElement, postImage } from './helpers.js';
 
 // when importing 'default' exports, use below syntax
 import API from './api.js';
@@ -12,22 +12,17 @@ const feed = api.getFeed();
 feed
 .then(posts => {
     posts.reduce((parent, post) => {
-        const img = createElement('img', null, 
-            { src: 'https://teaching-js.github.io/assignment/images/'+post.thumbnail, alt: post.meta.description_text, class: 'post-thumb' });
-        parent.appendChild(img);
-        return parent;
-
-    }, document.getElementById('feed'));
-});
-
-feed
-.then(posts => {
-    posts.reduce((parent, post) => {
         const section = createElement('section', null, { class: 'post' });
         section.appendChild(createElement('h2', post.meta.author, { class: 'post-title' }))
         section.appendChild(createElement('img', null, 
-        { src: 'https://teaching-js.github.io/assignment/images/'+post.src, alt: post.meta.description_text, class: 'post-image' }))
+        { src: '/images/'+post.src, alt: post.meta.description_text, class: 'post-image' }))
         parent.appendChild(section)
         return parent;
     }, document.getElementById('large-feed'))
 });
+
+// EXAMPLE to upload an image
+const input = document.querySelector('input[type="file"]');
+
+input.addEventListener('change', postImage);
+
