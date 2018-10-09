@@ -45,34 +45,6 @@ footer {
     list-style-type: none;
 }
 
-main {
-    max-width: 800px;
-    margin: 40px auto;
-}
-
-main, #feed {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-}
-
-#feed {
-    background-color: white;
-    border: 1px solid rgba(0,0,0,.0975);
-}
-
-#feed > * {
-    flex: 1 1 150px;
-    height: auto;
-}
-
-#large-feed {
-    margin: 30px auto;
-    width: 100%;
-}
-
 .post {
     max-width: 640px;
     overflow: hidden;
@@ -87,7 +59,6 @@ main, #feed {
     border-bottom: 1px solid rgba(0,0,0,.0975);
 }
 
-/* Add your styles here */
 .post-thumb {
     margin: 0;
     padding: 3px;
@@ -119,3 +90,5 @@ main, #feed {
         height: auto;
     }
 }
+
+/* Add your styles here */

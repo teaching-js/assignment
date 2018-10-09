@@ -4,7 +4,7 @@
   "description": "Build a Single Page Application using vanilla javascript.",
   "main": "index.js",
   "scripts": {
-    "dev": "npx http-server",
+    "start": "npx http-server",
     "lint": "npx eslint src/**/*.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
