@@ -13,17 +13,34 @@ user = api.namespace('user', description='User Information Services')
 db = DB()
 
 # Modals
+
+
+
+post_meta = api.model('post_meta',{
+    "author": fields.Integer(),
+    "description_text": fields.String(),
+    "published": fields.String(),
+    "likes": fields.List(fields.String())
+})
+
+post_details = api.model('post_details',{
+  "id": fields.Integer(),
+  "meta": fields.Nested(post_meta),
+  "thumbnail": fields.String(),
+  "src": fields.String()
+})
+
 login_details = api.model('login_details', {
-  'username': fields.String(required=True, example='greg'),
+  'username': fields.String(required=True, example='xX_greginator_Xx'),
   'password': fields.String(required=True, example='1234'),
 })
 
 user_details = api.model('user_details', {
-    'username': fields.String(),
-    'name': fields.String(),
-    'id'  : fields.Integer(min=0),
-    'email': fields.String(),
-    'posts': fields.List()
+    'id': fields.Integer(min=0),
+    'username': fields.String(example='xX_greginator_Xx'),
+    'email': fields.String(example='greg@fred.com'),
+    'name':  fields.String(example='greg'),
+    'posts': fields.List(fields.Nested(post_details))
 })
 
 signup_details = api.model('signup_details', {
@@ -34,7 +51,6 @@ signup_details = api.model('signup_details', {
 })
 
 auth_details = api.parser().add_argument('Authorization', location='headers')
-
 
 # Globals
 
@@ -74,6 +90,7 @@ class Login(Resource):
             "msg": "success",
             "token": t
         }
+
 @auth.route('/signup')
 class Signup(Resource):
     @auth.response(200, 'Success')
@@ -100,10 +117,9 @@ class Signup(Resource):
 
 @user.route('/')
 class User(Resource):
-    @user.response(200, 'Success')
     @user.response(405, 'Invalid Authorization Token')
     @api.expect(auth_details)
-    @api.doc(model=user_details)
+    @api.response(200, 'Success', user_details)
     def get(self):
         t = request.headers.get('Authorization',None)
         if not t:
