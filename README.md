@@ -30,6 +30,13 @@ to get it started.
 For the full docs on the API, start the backend server and navigate to the root (very likely to be `localhost:5000`). You'll see
 all the endpoints, descriptions and expected responses.
 
+## Getting Started
+Clone the repository provided. It has a whole bunch of code, documentation, and a whole working server you'll need for
+developing your frontend applicaiton.
+
+Please read the relevant docs for setup in the folders `/backend` and `/frontend` of the provided repository.
+Each folder outlines basic steps to get started. There are also some comments provided in the frontend source code.
+
 ## Milestones
 Level 0 focuses on the basic user interface and interaction building of the site.
 There is no need to implement any integration with the backend for this level.

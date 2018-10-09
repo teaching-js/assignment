@@ -16,6 +16,7 @@ class Login(Resource):
     @auth.response(400, 'Missing Username/Password')
     @auth.response(405, 'Invalid Username/Password')
     @auth.expect(login_details)
+    @auth.doc(description='This is used to authenticate a verified account created through signup.')
     def post(self):
         (un,ps) = unpack(request.json,"username","password")
         if not db.exists("USER").where(username=un,password=ps):
@@ -34,6 +35,7 @@ class Signup(Resource):
     @auth.response(400, 'Malformed Request')
     @auth.response(405, 'Username Taken')
     @api.expect(signup_details)
+    @auth.doc(description='This is used to create a new account.')
     def post(self):
         (un,ps,em,n) = unpack(request.json,"username","password","email","name")
         if db.exists("USER").where(username=un):
