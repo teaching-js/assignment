@@ -27,8 +27,8 @@ The backend server will be where you'll be getting your data. Don't touch the co
 it's meant to be a black box. Final testing will be done with our own backend. Use the instructions provided in the backend/README.md
 to get it started.
 
-For the full docs on the API, start the backend server and navigate to the root. You'll see
-all the endpoints and expected responses.
+For the full docs on the API, start the backend server and navigate to the root (very likely to be `localhost:5000`). You'll see
+all the endpoints, descriptions and expected responses.
 
 ## Milestones
 Level 0 focuses on the basic user interface and interaction building of the site.
