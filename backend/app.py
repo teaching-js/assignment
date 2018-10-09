@@ -157,7 +157,7 @@ class User(Resource):
         t = t.split(" ")[1]
         u = db.select("USER").where(curr_token=t).execute()
         u_id = u[0]
-        db.update("USER").where(id=u_id).set(**request.json)
+        db.update("USER").where(id=u_id).set(**request.json).execute()
 
 @user.route('/feed')
 class User(Resource):
@@ -174,7 +174,34 @@ class User(Resource):
             abort(400,'Malformed Request')
         t = t.split(" ")[1]
         u = db.select("USER").where(curr_token=t).execute()
-        return {}
+        return {
+            #TODO: do dis
+            "posts": []
+        }
+
+@user.route('/follow')
+class User(Resource):
+    @user.response(405, 'Invalid Authorization Token')
+    @api.expect(auth_details)
+    @user.response(200, 'Success')
+    @user.param("username","username of person to follow")
+    def put(self):
+        t = request.headers.get('Authorization',None)
+        n = request.form.get('username',None)
+        if not t:
+            abort(405,'Invalid Authorization Token')
+        if not n  or not db.exists("USER").where(username=n):
+            abort(400,'Malformed Request')
+        t = t.split(" ")[1]
+        u = db.select("USER").where(curr_token=t).execute()
+        u_id = u[0]
+        f_id = db.select("USER").where(username=u).execute()[0]
+        following = u[4]
+        if following == None:
+            following = ""
+        follow_list = ",".join(following.split(",").append(n))
+        db.update("USER").where(id=u_id).set(following=follow_list).execute()
+
 
 
 if __name__ == "__main__":

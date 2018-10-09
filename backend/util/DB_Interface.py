@@ -29,6 +29,9 @@ class Stub:
         self.q += "({}) VALUES({})".format(keys,ph);
         self.q_values += tuple(values)
         return self
+    def limit(self, n):
+        self.q += " LIMIT "+n
+        return self
     def execute(self):
         c = self.conn.cursor()
         # since the last python update we can now
@@ -69,7 +72,7 @@ class DB:
             "USER" : "UPDATE USERS"
         }
         self.select_queries = {
-            "USER" : "SELECT ID,USERNAME,NAME,EMAIL FROM USERS"
+            "USER" : "SELECT ID,USERNAME,NAME,EMAIL,FOLLOWING FROM USERS"
         }
         self.insert_queries = {
             "USER" : "INSERT INTO USERS"
