@@ -69,7 +69,7 @@ class DB:
             "USER" : "UPDATE USERS"
         }
         self.select_queries = {
-            "USER" : "SELECT USERNAME FROM USERS"
+            "USER" : "SELECT ID,USERNAME,NAME,EMAIL FROM USERS"
         }
         self.insert_queries = {
             "USER" : "INSERT INTO USERS"

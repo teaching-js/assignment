@@ -5,26 +5,39 @@ from flask_restplus import Resource, Api, abort, reqparse, fields
 from util.DB_Interface import DB
 import json
 
+# magic
 app = Flask(__name__)
 api = Api(app)
 auth = api.namespace('auth', description='Authentication Services')
 user = api.namespace('user', description='User Information Services')
 db = DB()
 
+# Modals
 login_details = api.model('login_details', {
   'username': fields.String(required=True, example='greg'),
   'password': fields.String(required=True, example='1234'),
 })
-auth_details = api.model('auth_details', {
-  'Authorization': fields.String(required=True, example='Token 1234'),
-},location='headers')
-signup_details = api.model('signup_details', {
-  'username': fields.String(required=True, example='greg'),
-  'password': fields.String(required=True, example='1234'),
-  'email': fields.String(required=True, example='greg@fred.com')
+
+user_details = api.model('user_details', {
+    'username': fields.String(),
+    'name': fields.String(),
+    'id'  : fields.Integer(min=0),
+    'email': fields.String(),
+    'posts': fields.List()
 })
+
+signup_details = api.model('signup_details', {
+  'username': fields.String(required=True, example='xX_greginator_Xx'),
+  'password': fields.String(required=True, example='1234'),
+  'email': fields.String(required=True, example='greg@fred.com'),
+  'name':  fields.String(required=True, example='greg')
+})
+
 auth_details = api.parser().add_argument('Authorization', location='headers')
+
+
 # Globals
+
 def unpack(j,*args,**kargs):
     r = [j.get(arg,None) for arg in args]
     if kargs.get("required",True):
@@ -37,6 +50,7 @@ def gen_token():
         token = secrets.token_hex(32)
     return token
 
+# end points
 @auth.route('/login')
 class Login(Resource):
     def gen_token():
@@ -67,7 +81,7 @@ class Signup(Resource):
     @auth.response(405, 'Username Taken')
     @api.expect(signup_details)
     def post(self):
-        (un,ps,em) = unpack(request.json,"username","password","email")
+        (un,ps,em,n) = unpack(request.json,"username","password","email","name")
         if db.exists("USER").where(username=un):
             abort(405)
         t = gen_token()
@@ -75,8 +89,9 @@ class Signup(Resource):
             curr_token=t,
             username=un,
             password=ps,
-            email=em
-            )
+            email=em,
+            name=n
+        )
         db_r.execute()
         return {
             "msg": "success",
@@ -88,6 +103,7 @@ class User(Resource):
     @user.response(200, 'Success')
     @user.response(405, 'Invalid Authorization Token')
     @api.expect(auth_details)
+    @api.doc(model=user_details)
     def get(self):
         t = request.headers.get('Authorization',None)
         if not t:
@@ -95,7 +111,11 @@ class User(Resource):
         t = t.split(" ")[1]
         u = db.select("USER").where(curr_token=t).execute()
         return {
-            "username": u[0]
+            "username": u[1],
+            "name": u[2],
+            "id"  : u[0],
+            "email": u[3],
+            "posts": None
         }
 
 
