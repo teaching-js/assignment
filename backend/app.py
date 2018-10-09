@@ -102,9 +102,19 @@ class Feed(Resource):
         n = request.args.get('p',None)
         if not n:
             abort(400,'Malformed Request')
+
+        following = get_text_list(u[4],process_f=lambda x:int(x))
+        following = [db.select("USER").where(id=id).execute()[1] for id in following]
+        wildcards = ",".join(["?"]*len(following))
+        q = "SELECT * FROM POSTS WHERE author in ({})".format(wildcards)
+        q+=" LIMIT ?"
+        following.append(n)
+        all_posts = db.raw(q,following)
+        all_posts = [format_post(row) for row in all_posts]
+        print(all_posts)
+        all_posts.sort(reverse=True,key=lambda x: datetime.strptime(x["meta"]["published"],"%Y-%m-%d %H:%M:%S.%f"))
         return {
-            #TODO: do dis
-            "posts": []
+            "posts": all_posts
         }
 
 @user.route('/follow')

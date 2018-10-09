@@ -2,10 +2,10 @@ import sqlite3
 
 class Stub:
     def __init__(self, conn_url, type, q):
-        self.conn = sqlite3.connect(conn_url)
         self.q = q
         self.type = type
         self.q_values = tuple()
+        self.conn_url = conn_url
 
     def set(self, **kargs):
         if self.type != "UPDATE":
@@ -33,10 +33,10 @@ class Stub:
         self.q += " LIMIT "+n
         return self
     def execute(self):
+        self.conn = sqlite3.connect(self.conn_url)
         c = self.conn.cursor()
         # since the last python update we can now
         # assume kargs are ordered :D
-        print(self.q,self.q_values)
         c.execute(self.q,self.q_values)
         if (self.type == "EXISTS"):
             r = (c.fetchone() != None)
@@ -90,6 +90,14 @@ class DB:
             "POST": "DELETE FROM POSTS",
             "COMMENT": "DELETE FROM COMMENTS"
         }
+    def raw(self, q, params):
+        self.conn = sqlite3.connect(self.conn_url)
+        c = self.conn.cursor()
+        c.execute(q,tuple(params))
+        r = c.fetchall()
+        self.conn.commit()
+        self.conn.close()
+        return r
     def exists(self, query_name, **kargs):
         s = Stub(self.conn_url, "EXISTS", self.exist_queries[query_name])
         return s
