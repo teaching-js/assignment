@@ -65,6 +65,7 @@ class User(Resource):
     @user.response(400, 'Malformed Request')
     @user.expect(auth_details)
     @user.param("id","Id of user to get information for (defaults to logged in user)")
+    @auth.doc(description='Get user info')
     def get(self):
         u = authorize(request)
         u_id = int(request.args.get("id",u[0]))
@@ -178,7 +179,7 @@ class UnFollow(Resource):
             "message": "success"
         }
 
-@posts.route('/')
+@posts.route('')
 class Post(Resource):
     @posts.response(200, 'Success')
     @posts.response(405, 'Invalid Auth Token')

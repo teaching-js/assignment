@@ -1,4 +1,9 @@
-# COMP2041 JavaScript Assignment (2041stagram)
+# Frontend
+
+## Recommended Steps for tackling the assignment
+1. Get something basic working with the data provided in `frontend/data`
+2. Once you've got something basic working, start hitting the `/dummy/` API, which doesn't require authentication. See docs.
+3. Finally, once you've got that working, transition over to use the real API.
 
 ## Quickstart
 
