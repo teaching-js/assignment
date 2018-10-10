@@ -1,4 +1,5 @@
 import secrets
+from app import db
 
 def unpack(j,*args,**kargs):
     r = [j.get(arg,None) for arg in args]

@@ -2,7 +2,7 @@ from app import api,db
 from util.globals import *
 from util.models import *
 from flask_restplus import Resource, abort, reqparse, fields
-
+from flask import request
 auth = api.namespace('auth', description='Authentication Services')
 
 @auth.route('/login')

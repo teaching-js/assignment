@@ -2,6 +2,7 @@ from app import api,db
 from util.globals import *
 from util.models import *
 from flask_restplus import Resource, abort, reqparse, fields
+from flask import request
 
 user = api.namespace('user', description='User Information Services')
 

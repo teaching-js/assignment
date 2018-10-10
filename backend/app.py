@@ -1,7 +1,7 @@
-from flask import Flask, request
+from flask import Flask
 from flask_restplus import Api
-from util.DB_Interface import DB
 from flask_cors import CORS
+from util.DB_Interface import DB
 
 app = Flask(__name__)
 CORS(app)

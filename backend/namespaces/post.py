@@ -6,6 +6,7 @@ from PIL import Image
 from io import BytesIO
 import base64
 import time
+from flask import request
 
 posts = api.namespace('post', description='Post Services')
 
