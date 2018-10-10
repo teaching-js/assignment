@@ -18,7 +18,6 @@ pip3 install -r requirements.txt
 python3 app.py
 ```
 
-<<<<<<< HEAD
 ## Frontend
 
 The frontend can initially be used without the dev server; it provides some sample data
@@ -35,6 +34,3 @@ npm start
 ```
 
 See Frontend README for more details.
-=======
-
->>>>>>> d39c30229b3ac1feb90923d0bbc292a917a0ab7b

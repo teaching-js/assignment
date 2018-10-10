@@ -33,6 +33,7 @@ class Stub:
         self.q += " LIMIT "+n
         return self
     def execute(self):
+        print(self.q,self.q_values)
         self.conn = sqlite3.connect(self.conn_url)
         c = self.conn.cursor()
         # since the last python update we can now
@@ -76,7 +77,7 @@ class DB:
             "COMMENT": "UPDATE COMMENTS"
         }
         self.select_queries = {
-            "USER" : "SELECT ID,USERNAME,NAME,EMAIL,FOLLOWING FROM USERS",
+            "USER" : "SELECT ID,USERNAME,NAME,EMAIL,FOLLOWING,FOLLOWED_NUM FROM USERS",
             "POST": "SELECT * FROM POSTS",
             "COMMENT": "SELECT * FROM COMMENTS"
         }

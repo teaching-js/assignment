@@ -1,9 +1,11 @@
 from flask import Flask, request
 from flask_restplus import Resource, Api, abort, reqparse, fields
 from util.DB_Interface import DB
+from flask_cors import CORS
 import secrets
 
 app = Flask(__name__)
+CORS(app)
 api = Api(app)
 db = DB()
 

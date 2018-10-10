@@ -3,6 +3,10 @@ from models import *
 import json
 from datetime import datetime
 from globals import app
+from flask_cors import cross_origin
+from PIL import Image
+from io import BytesIO
+import base64
 
 # magic
 auth = api.namespace('auth', description='Authentication Services')
@@ -60,19 +64,25 @@ class User(Resource):
     @user.response(405, 'Invalid Auth Token')
     @user.response(400, 'Malformed Request')
     @user.expect(auth_details)
+    @user.param("id","Id of user to get information for (defaults to logged in user)")
     def get(self):
         u = authorize(request)
-        u_id = u[0]
+        u_id = int(request.args.get("id",u[0]))
+        if not db.exists("USER").where(id=u_id):
+            abort(400,"Malformed Request")
+        u = db.select("USER").where(id=u_id).execute()
         u_username = u[1]
+
         follow_list = get_text_list(u[4])
         posts_raw = db.select_all("POST").where(author=u_username).execute()
         posts = [post[0] for post in posts_raw]
         return {
             "username": u[1],
             "name": u[2],
-            "id"  : u[0],
+            "id"  : int(u[0]),
             "email": u[3],
             "following": [int(x) for x in follow_list],
+            "followed_num": u[5],
             "posts": posts
         }
 
@@ -82,7 +92,7 @@ class User(Resource):
     @user.expect(auth_details,user_update_details)
     def put(self):
         u = authorize(request)
-        u_id = u[0]
+        u_id = int(u[0])
         if not request.json:
             abort(400, 'Malformed request')
         keys = request.json.keys()
@@ -98,22 +108,21 @@ class Feed(Resource):
     @user.response(400, 'Malformed Request')
     @user.response(200, 'Success', post_list_details)
     @user.expect(auth_details)
-    @user.param("p","Number of posts to fetch")
+    @user.param("n","Number of posts to fetch, 10 by default")
+    @user.param("p","What post to start at, 0 by default")
     def get(self):
         u = authorize(request)
-        n = request.args.get('p',None)
-        if not n:
-            abort(400,'Malformed Request')
-
+        n = request.args.get('n',10)
+        p = request.args.get('p',0)
         following = get_text_list(u[4],process_f=lambda x:int(x))
-        following = [db.select("USER").where(id=id).execute()[1] for id in following]
+        following = [db.select("USER").where(id=int(id)).execute()[1] for id in following]
         wildcards = ",".join(["?"]*len(following))
         q = "SELECT * FROM POSTS WHERE author in ({})".format(wildcards)
-        q+=" LIMIT ?"
+        q+=" LIMIT ? OFFSET ?"
         following.append(n)
+        following.append(p)
         all_posts = db.raw(q,following)
         all_posts = [format_post(row) for row in all_posts]
-        print(all_posts)
         all_posts.sort(reverse=True,key=lambda x: datetime.strptime(x["meta"]["published"],"%Y-%m-%d %H:%M:%S.%f"))
         return {
             "posts": all_posts
@@ -128,12 +137,16 @@ class Follow(Resource):
     @user.param("username","username of person to follow")
     def put(self):
         u = authorize(request)
-        u_id = u[0]
+        u_id = int(u[0])
         follow_list = get_text_list(u[4])
         to_follow = request.args.get('username',None)
         if to_follow == None or not db.exists("USER").where(username=to_follow):
-            abort(400,'Malformed Request Or Unknown username')
+            abort(400,'Malformed Request')
+        if to_follow == u[1]:
+            abort(400,'Malformed Request')
         to_follow = db.select("USER").where(username=to_follow).execute()[0]
+        if to_follow not in follow_list:
+            db.raw("UPDATE USERS SET FOLLOWED_NUM = FOLLOWED_NUM + 1 WHERE ID = ?",[to_follow])
         follow_list.add(to_follow)
         db.update("USER").set(following=get_list_text(follow_list)).where(id=u_id).execute()
         return {
@@ -148,14 +161,19 @@ class UnFollow(Resource):
     @user.param("username","username of person to follow")
     def put(self):
         u = authorize(request)
-        u_id = u[0]
+        u_id = int(u[0])
         following = get_text_list(u[4])
         to_follow = request.args.get('username',None)
+        if to_follow == u[1]:
+            abort(400,'Malformed Request')
         if to_follow == None or not db.exists("USER").where(username=to_follow):
             abort(400,'Malformed Request Or Unknown username')
         to_follow = db.select("USER").where(username=to_follow).execute()[0]
+        if to_follow in follow_list:
+            db.raw("UPDATE USERS SET FOLLOWED_NUM = FOLLOWED_NUM - 1 WHERE ID = ?",[to_follow])
         follow_list.discard(to_follow)
         db.update("USER").set(following=get_list_text(follow_list)).where(id=u_id).execute()
+
         return {
             "message": "success"
         }
@@ -173,12 +191,21 @@ class Post(Resource):
         if not j:
             abort(400, 'Malformed request')
         (desc,src) = unpack(j,"description_text","src")
+        try:
+            size = (150,150)
+            im = Image.open(BytesIO(base64.b64decode(src)))
+            im.thumbnail(size, Image.ANTIALIAS)
+            buffered = BytesIO()
+            im.save(buffered, format="PNG")
+            thumbnail = str(base64.b64encode(buffered.getvalue()))
+        except:
+            abort(400,"Image Data Could Not Be Processed")
         db.insert("POST").with_values(
             author=u_username,
             description=desc,
             published=datetime.now(),
             likes="",
-            thumbnail=src, #TODO: what is the thumbnail supposed to be?
+            thumbnail=thumbnail,
             src=src
         ).execute()
         return {
@@ -191,7 +218,7 @@ class Post(Resource):
     @posts.expect(auth_details,new_post_details)
     def put(self):
         j = request.json
-        id = request.args.get("id",None)
+        id = int(request.args.get("id",None))
         u = authorize(request)
         u_username = u[1]
         if not j or not id:
@@ -219,7 +246,7 @@ class Post(Resource):
     @posts.param("id","the id of the post to delete")
     def delete(self):
         u = authorize(request)
-        id = request.args.get("id",None)
+        id = int(request.args.get("id",None))
         if not id:
             abort(400,"Malformed Request")
 
@@ -244,7 +271,7 @@ class Post(Resource):
     @posts.param("id","the id of the post to fetch")
     def get(self):
         u = authorize(request)
-        id = request.args.get("id",None)
+        id = int(request.args.get("id",None))
         if not id:
             abort(400,"Malformed Request")
         p = db.select("POST").where(id=id).execute()
@@ -261,7 +288,7 @@ class Like(Resource):
     @posts.expect(auth_details)
     def put(self):
         u = authorize(request)
-        id = request.args.get("id",None)
+        id = int(request.args.get("id",None))
         if not id or not db.exists("POST").where(id=id):
             abort(400, 'Malformed request')
         p = db.select("POST").where(id=id).execute()
@@ -282,7 +309,7 @@ class Unlike(Resource):
     @posts.expect(auth_details)
     def put(self):
         u = authorize(request)
-        id = request.args.get("id",None)
+        id = int(request.args.get("id",None))
         if not id or not db.exists("POST").where(id=id):
             abort(400, 'Malformed request')
         p = db.select("POST").where(id=id).execute()
@@ -304,7 +331,7 @@ class Comment(Resource):
     def put(self):
         u = authorize(request)
         j = request.json
-        id = request.args.get("id",None)
+        id = int(request.args.get("id",None))
         if not id or not j:
             abort(400, 'Malformed request')
         if not db.exists("POST").where(id=id):
