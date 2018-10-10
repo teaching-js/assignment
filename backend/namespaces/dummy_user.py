@@ -59,7 +59,9 @@ class User(Resource):
         for k in valid_keys:
             safe[k] = request.json[k]
         db.update('USER').where(id=u_id).set(**safe).execute()
-
+        return {
+            "message": "success"
+        }
 @dummy_user.route('/feed')
 class Feed(Resource):
     @dummy_user.response(200, 'Success', post_list_details)

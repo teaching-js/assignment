@@ -33,7 +33,6 @@ class Stub:
         self.q += " LIMIT "+n
         return self
     def execute(self):
-        print(self.q,self.q_values)
         self.conn = sqlite3.connect(self.conn_url)
         c = self.conn.cursor()
         # since the last python update we can now
