@@ -31,6 +31,14 @@ to get it started.
 For the full docs on the API, start the backend server and navigate to the root (very likely to be `localhost:5000`). You'll see
 all the endpoints, descriptions and expected responses.
 
+## A Working Product
+Your site should be compatible with 'modern' Chrome, Safari, and Mozilla browsers.
+We will assume your browser has JavaScript enabled, and supports ES6 syntax.
+
+## Restrictions
+You cannot use more than _minimal_ amounts of external JavaScript. Do not use NPM except to 
+install the helper development libraries. We will allow you to use CSS from external sources as long as it properly attributed.
+
 ## Getting Started
 Clone the repository provided. It has a whole bunch of code, documentation, and a whole working server you'll need for
 developing your frontend applicaiton.
