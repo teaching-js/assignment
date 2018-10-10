@@ -26,6 +26,9 @@ def authorize(r):
         abort(405,'Invalid Authorization Token')
     return db.select("USER").where(curr_token=t).execute()
 
+def get_dummy_user():
+    return db.select("USER").where(id=0).execute()
+
 def text_list_to_set(raw,process_f=lambda x:x):
     if raw == None:
         return set()

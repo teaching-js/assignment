@@ -6,6 +6,11 @@ comment_details = api.model('comment_details',{
     "published": fields.String(),
     "comment": fields.String()
 })
+
+post_id_details = api.model('post_id_details',{
+    "post_id": fields.String()
+})
+
 post_meta_details = api.model('post_meta_details',{
     "author": fields.String(),
     "description_text": fields.String(),

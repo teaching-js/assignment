@@ -12,7 +12,7 @@ posts = api.namespace('post', description='Post Services')
 
 @posts.route('/')
 class Post(Resource):
-    @posts.response(200, 'Success')
+    @posts.response(200, 'Success', post_id_details)
     @posts.response(403, 'Invalid Auth Token')
     @posts.response(400, 'Malformed Request / Image could not be processed')
     @posts.expect(auth_details,new_post_details)
@@ -23,6 +23,7 @@ class Post(Resource):
         If either of these is not met the request is considered malformed.
         Note the src just needs to be the base64 data, no meta data such as 'data:base64;'
         is required. Putting it in will make the data invalid.
+        Returns the post_id of the new post on success. 
     ''')
     def post(self):
         j = request.json
@@ -42,7 +43,7 @@ class Post(Resource):
             thumbnail = str(base64.b64encode(buffered.getvalue()))
         except:
             abort(400,'Image Data Could Not Be Processed')
-        db.insert('POST').with_values(
+        post_id=db.insert('POST').with_values(
             author=u_username,
             description=desc,
             published=str(time.time()),
@@ -51,7 +52,7 @@ class Post(Resource):
             src=src
         ).execute()
         return {
-            'message': 'success'
+            'post_id': post_id
         }
 
     @posts.response(200, 'Success')
