@@ -17,13 +17,13 @@ def gen_token():
 def authorize(r):
     t = r.headers.get('Authorization',None)
     if not t:
-        abort(405,'Unsupplied Authorization Token')
+        abort(403,'Unsupplied Authorization Token')
     try:
         t = t.split(" ")[1]
     except:
-        abort(405,'Invalid Authorization Token')
+        abort(403,'Invalid Authorization Token')
     if not db.exists("USER").where(curr_token=t):
-        abort(405,'Invalid Authorization Token')
+        abort(403,'Invalid Authorization Token')
     return db.select("USER").where(curr_token=t).execute()
 
 def get_dummy_user():
