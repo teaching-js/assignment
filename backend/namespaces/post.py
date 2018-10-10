@@ -122,7 +122,7 @@ class Post(Resource):
         print(p[1],u[1])
         if p[1] != u[1]:
             abort(403,'You Are Unauthorized To Make That Request')
-        comment_list = get_text_list(p[7])
+        comment_list = text_list_to_set(p[7])
         [db.delete('COMMENT').where(id=c_id).execute() for c_id in comment_list]
         db.delete('POST').where(id=id).execute()
         return {
@@ -181,9 +181,9 @@ class Like(Resource):
         if not db.exists('POST').where(id=id):
             abort(400, 'Malformed request')
         p = db.select('POST').where(id=id).execute()
-        likes = get_text_list(p[4],process_f=lambda x:int(x))
+        likes = text_list_to_set(p[4],process_f=lambda x:int(x))
         likes.add(u[0])
-        likes = get_list_text(likes)
+        likes = set_to_text_list(likes)
         db.update('POST').set(likes=likes).where(id=id).execute()
         return {
             'message': 'success'
@@ -210,9 +210,9 @@ class Unlike(Resource):
         if not id or not db.exists('POST').where(id=id):
             abort(400, 'Malformed request')
         p = db.select('POST').where(id=id).execute()
-        likes = get_text_list(p[4],process_f=lambda x: int(x))
+        likes = text_list_to_set(p[4],process_f=lambda x: int(x))
         likes.discard(u[0])
-        likes = get_list_text(likes)
+        likes = set_to_text_list(likes)
         db.update('POST').set(likes=likes).where(id=id).execute()
         return {
             'message': 'success'
@@ -251,9 +251,9 @@ class Comment(Resource):
             published=str(time.time())
         ).execute()
         p = db.select('POST').where(id=id).execute()
-        comment_list = get_text_list(p[7],process_f=lambda x: int(x))
+        comment_list = text_list_to_set(p[7],process_f=lambda x: int(x))
         comment_list.add(comment_id)
-        comment_list = get_list_text(comment_list)
+        comment_list = set_to_text_list(comment_list)
         db.update('POST').set(comments=comment_list).where(id=id).execute()
         return {
             'message': 'success'

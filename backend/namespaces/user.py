@@ -30,7 +30,7 @@ class User(Resource):
         u = db.select('USER').where(id=u_id).execute()
         u_username = u[1]
 
-        follow_list = get_text_list(u[4])
+        follow_list = text_list_to_set(u[4])
         posts_raw = db.select_all('POST').where(author=u_username).execute()
         posts = [post[0] for post in posts_raw]
         return {
@@ -95,7 +95,7 @@ class Feed(Resource):
         u = authorize(request)
         n = request.args.get('n',10)
         p = request.args.get('p',0)
-        following = get_text_list(u[4],process_f=lambda x:int(x))
+        following = text_list_to_set(u[4],process_f=lambda x:int(x))
         following = [db.select('USER').where(id=int(id)).execute()[1] for id in following]
         wildcards = ','.join(['?']*len(following))
         q = 'SELECT * FROM POSTS WHERE author in ({})'.format(wildcards)
@@ -124,7 +124,7 @@ class Follow(Resource):
     def put(self):
         u = authorize(request)
         u_id = int(u[0])
-        follow_list = get_text_list(u[4])
+        follow_list = text_list_to_set(u[4])
         to_follow = request.args.get('username',None)
         if to_follow == None or not db.exists('USER').where(username=to_follow):
             abort(400,'Malformed Request')
@@ -134,7 +134,7 @@ class Follow(Resource):
         if to_follow not in follow_list:
             db.raw('UPDATE USERS SET FOLLOWED_NUM = FOLLOWED_NUM + 1 WHERE ID = ?',[to_follow])
         follow_list.add(to_follow)
-        db.update('USER').set(following=get_list_text(follow_list)).where(id=u_id).execute()
+        db.update('USER').set(following=set_to_text_list(follow_list)).where(id=u_id).execute()
         return {
             'message': 'success'
         }
@@ -154,7 +154,7 @@ class UnFollow(Resource):
     def put(self):
         u = authorize(request)
         u_id = int(u[0])
-        following = get_text_list(u[4])
+        following = text_list_to_set(u[4])
         to_follow = request.args.get('username',None)
         if to_follow == u[1]:
             abort(400,'Malformed Request')
@@ -164,7 +164,7 @@ class UnFollow(Resource):
         if to_follow in follow_list:
             db.raw('UPDATE USERS SET FOLLOWED_NUM = FOLLOWED_NUM - 1 WHERE ID = ?',[to_follow])
         follow_list.discard(to_follow)
-        db.update('USER').set(following=get_list_text(follow_list)).where(id=u_id).execute()
+        db.update('USER').set(following=set_to_text_list(follow_list)).where(id=u_id).execute()
 
         return {
             'message': 'success'
