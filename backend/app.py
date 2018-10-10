@@ -161,7 +161,7 @@ class UnFollow(Resource):
             "message": "success"
         }
 
-@posts.route('/')
+@posts.route('')
 class Post(Resource):
     @posts.response(200, 'Success')
     @posts.response(405, 'Invalid Auth Token')

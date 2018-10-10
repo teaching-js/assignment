@@ -21,37 +21,60 @@
             const API_URL = 'http://localhost:5000'
 
             describe('Basic GETs', function() {
-                it('/user/', function() {
-                    return fetch(`${API_URL}/user/`).then(response => {
+                it('/user', function() {
+                    return fetch(`${API_URL}/user`).then(response => {
                         chai.assert(response.ok);
                     })
                 });
 
                 it('/post', function() {
-                    return fetch(`${API_URL}/post/`).then(response => {
+                    return fetch(`${API_URL}/post`).then(response => {
                         chai.assert(response.ok);
                     })
                 });
 
                 it('should work', function() {
-                    return fetch(`${API_URL}/user/feed/`).then(response => {
+                    return fetch(`${API_URL}/user/feed`).then(response => {
                         chai.assert(response.ok);
                     })
                 });
             });
 
-            describe('Complex PUTs', function() {
-                it('/user/', function() {
+            describe('Auth Routes', function() {
+                it('/auth/login', function() {
+                    return fetch(`${API_URL}/auth/login`, { 
+                        method: 'POST',
+                        body: JSON.stringify({})
+                    })
+                    .then(response => {
+                        chai.assert(response.ok);
+                    })
+                });
+
+                it('/auth/signup', function() {
+                    return fetch(`${API_URL}/auth/signup`, { 
+                        method: 'POST', body: JSON.stringify({}) 
+                    })
+                    .then(response => {
+                        chai.assert(response.ok);
+                    })
+                });
+            });
+
+            describe('PUTs/POSTs', function() {
+                it('/user', function() {
                     return fetch(`${API_URL}/user`, {
-                        method: 'PUT'
+                        method: 'PUT',
+                        body: JSON.stringify({})
                     }).then(response => {
                         chai.assert(response.ok);
                     })
                 });
 
-                it('/user/', function() {
+                it('/user/follow', function() {
                     return fetch(`${API_URL}/user/follow`, {
-                        method: 'PUT'
+                        method: 'PUT',
+                        body: JSON.stringify({})
                     }).then(response => {
                         chai.assert(response.ok);
                     })
@@ -59,7 +82,8 @@
 
                 it('should work', function() {
                     return fetch(`${API_URL}/post`, {
-                        method: 'POST'
+                        method: 'POST',
+                        body: JSON.stringify({})
                     }).then(response => {
                         chai.assert(response);
                     })
