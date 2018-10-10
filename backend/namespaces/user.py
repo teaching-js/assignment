@@ -63,15 +63,17 @@ class User(Resource):
 
         allowed_keys=['password','name','email']
         safe = {}
-        valid_keys = [k in allowed_keys for k in request.json.keys()]
+        valid_keys = [k for k in request.json.keys() if k in allowed_keys]
         if len(valid_keys) < 1:
             abort(400, 'Malformed request')
         if "password" in valid_keys and request.json["password"] == "":
             abort(400, 'Malformed request')
         for k in valid_keys:
             safe[k] = request.json[k]
-        db.update('USER').where(id=u_id).set(**safe).execute()
-
+        db.update('USER').set(**safe).where(id=u_id).execute()
+        return {
+            "msg": "success"
+        }
 @user.route('/feed')
 class Feed(Resource):
     @user.response(403, 'Invalid Auth Token')

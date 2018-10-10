@@ -23,7 +23,7 @@ class Post(Resource):
         If either of these is not met the request is considered malformed.
         Note the src just needs to be the base64 data, no meta data such as 'data:base64;'
         is required. Putting it in will make the data invalid.
-        Returns the post_id of the new post on success. 
+        Returns the post_id of the new post on success.
     ''')
     def post(self):
         j = request.json
