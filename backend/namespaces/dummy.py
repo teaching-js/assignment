@@ -10,7 +10,7 @@ from flask import request
 
 dummy = api.namespace('dummy', description='Dummy Post Services for testing')
 
-@dummy.route('/post')
+@dummy.route('/post', strict_slashes=False)
 class Dummy_Post(Resource):
     @dummy.response(200, 'Success', post_id_details)
     @dummy.response(400, 'Malformed Request / Image could not be processed')
@@ -59,11 +59,12 @@ class Dummy_Post(Resource):
     ''')
     def put(self):
         j = request.json
-        id = int(request.args.get('id',None))
+        id = request.args.get('id',None)
         u = get_dummy_user()
         u_username = u[1]
         if not j or not id:
             abort(400, 'Malformed request')
+        id = int(id)
         if not db.exists('POST').where(id=id):
             abort(400, 'Malformed request')
         # check the logged in user made this post
@@ -94,13 +95,13 @@ class Dummy_Post(Resource):
     ''')
     def delete(self):
         u = get_dummy_user()
-        id = int(request.args.get('id',None))
+        id = request.args.get('id',None)
         if not id:
             abort(400,'Malformed Request')
+        id = int(id)
         if not db.exists('POST').where(id=id):
             abort(400,'Malformed Request')
         p = db.select('POST').where(id=id).execute()
-        print(p[1],u[1])
         if p[1] != u[1]:
             abort(403,'You Are Unauthorized To Make That Request')
         comment_list = text_list_to_set(p[7])
@@ -118,15 +119,16 @@ class Dummy_Post(Resource):
     ''')
     def get(self):
         u = get_dummy_user()
-        id = int(request.args.get('id',None))
+        id = request.args.get('id',None)
         if not id:
             abort(400,'Malformed Request')
+        id =int(id)
         p = db.select('POST').where(id=id).execute()
         if not p:
             abort(400,'Malformed Request')
         return format_post(p)
 
-@dummy.route('/post/like')
+@dummy.route('/post/like', strict_slashes=False)
 class Like(Resource):
     @dummy.response(200, 'Success')
     @dummy.response(400, 'Malformed Request')
@@ -137,11 +139,13 @@ class Like(Resource):
     ''')
     def put(self):
         u = get_dummy_user()
-        id = int(request.args.get('id',None))
+        id = request.args.get('id',None)
         if not id:
             abort(400, 'Malformed request')
+        id = int(id)
         if not db.exists('POST').where(id=id):
             abort(400, 'Malformed request')
+
         p = db.select('POST').where(id=id).execute()
         likes = text_list_to_set(p[4],process_f=lambda x:int(x))
         likes.add(u[0])
@@ -151,7 +155,7 @@ class Like(Resource):
             'message': 'success'
         }
 
-@dummy.route('/post/unlike')
+@dummy.route('/post/unlike', strict_slashes=False)
 class Unlike(Resource):
     @dummy.response(200, 'Success')
     @dummy.response(400, 'Malformed Request')
@@ -162,8 +166,11 @@ class Unlike(Resource):
     ''')
     def put(self):
         u = get_dummy_user()
-        id = int(request.args.get('id',None))
-        if not id or not db.exists('POST').where(id=id):
+        id = request.args.get('id',None)
+        if not id:
+            abort(400, 'Malformed request')
+        id = int(id)
+        if not db.exists('POST').where(id=id):
             abort(400, 'Malformed request')
         p = db.select('POST').where(id=id).execute()
         likes = text_list_to_set(p[4],process_f=lambda x: int(x))
@@ -174,7 +181,7 @@ class Unlike(Resource):
             'message': 'success'
         }
 
-@dummy.route('/post/comment')
+@dummy.route('/post/comment', strict_slashes=False)
 class Comment(Resource):
     @dummy.response(200, 'Success')
     @dummy.response(400, 'Malformed Request')
@@ -187,9 +194,10 @@ class Comment(Resource):
     def put(self):
         u = get_dummy_user()
         j = request.json
-        id = int(request.args.get('id',None))
+        id = request.args.get('id',None)
         if not id or not j:
             abort(400, 'Malformed request')
+        id = int(id)
         if not db.exists('POST').where(id=id):
             abort(400, 'Malformed request')
         (comment,) = unpack(j,'comment')
@@ -210,7 +218,7 @@ class Comment(Resource):
         }
 
 
-@dummy.route('/user')
+@dummy.route('/user', strict_slashes=False)
 class User(Resource):
     @dummy.response(200, 'Success', user_details)
     @dummy.response(400, 'Malformed Request')
@@ -255,18 +263,18 @@ class User(Resource):
 
         allowed_keys=['password','name','email']
         safe = {}
-        valid_keys = [k in allowed_keys for k in request.json.keys()]
+        valid_keys = [k for k in request.json.keys() if k in allowed_keys]
         if len(valid_keys) < 1:
             abort(400, 'Malformed request')
         if "password" in valid_keys and request.json["password"] == "":
             abort(400, 'Malformed request')
         for k in valid_keys:
             safe[k] = request.json[k]
-        db.update('USER').where(id=u_id).set(**safe).execute()
+        db.update('USER').set(**safe).where(id=u_id).execute()
         return {
             "message": "success"
         }
-@dummy.route('/user/feed')
+@dummy.route('/user/feed', strict_slashes=False)
 class Feed(Resource):
     @dummy.response(200, 'Success', post_list_details)
     @dummy.param('n','Number of posts to fetch, 10 by default')
@@ -293,7 +301,7 @@ class Feed(Resource):
             'posts': all_posts
         }
 
-@dummy.route('/user/follow')
+@dummy.route('/user/follow', strict_slashes=False)
 class Follow(Resource):
     @dummy.response(200, 'Success')
     @dummy.response(400, 'Malformed Request')
@@ -320,7 +328,7 @@ class Follow(Resource):
             'message': 'success'
         }
 
-@dummy.route('/user/unfollow')
+@dummy.route('/user/unfollow', strict_slashes=False)
 class UnFollow(Resource):
     @dummy.response(200, 'Success')
     @dummy.response(400, 'Malformed Request')
@@ -339,10 +347,10 @@ class UnFollow(Resource):
         if to_follow == None or not db.exists('USER').where(username=to_follow):
             abort(400,'Malformed Request Or Unknown username')
         to_follow = db.select('USER').where(username=to_follow).execute()[0]
-        if to_follow in follow_list:
+        if to_follow in following:
             db.raw('UPDATE USERS SET FOLLOWED_NUM = FOLLOWED_NUM - 1 WHERE ID = ?',[to_follow])
-        follow_list.discard(to_follow)
-        db.update('USER').set(following=set_to_text_list(follow_list)).where(id=u_id).execute()
+        following.discard(to_follow)
+        db.update('USER').set(following=set_to_text_list(following)).where(id=u_id).execute()
 
         return {
             'message': 'success'

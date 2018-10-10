@@ -10,7 +10,7 @@ from flask import request
 
 posts = api.namespace('post', description='Post Services')
 
-@posts.route('')
+@posts.route('/', strict_slashes=False)
 class Post(Resource):
     @posts.response(200, 'Success', post_id_details)
     @posts.response(403, 'Invalid Auth Token')
@@ -72,7 +72,10 @@ class Post(Resource):
     ''')
     def put(self):
         j = request.json
-        id = int(request.args.get('id',None))
+        try:
+            id = int(request.args.get('id',None))
+        except:
+            abort(400, 'Malformed request')
         u = authorize(request)
         u_username = u[1]
         if not j or not id:
@@ -114,13 +117,15 @@ class Post(Resource):
     ''')
     def delete(self):
         u = authorize(request)
-        id = int(request.args.get('id',None))
+        try:
+            id = int(request.args.get('id',None))
+        except:
+            abort(400, 'Malformed request')
         if not id:
             abort(400,'Malformed Request')
         if not db.exists('POST').where(id=id):
             abort(400,'Malformed Request')
         p = db.select('POST').where(id=id).execute()
-        print(p[1],u[1])
         if p[1] != u[1]:
             abort(403,'You Are Unauthorized To Make That Request')
         comment_list = text_list_to_set(p[7])
@@ -151,16 +156,16 @@ class Post(Resource):
     ''')
     def get(self):
         u = authorize(request)
-        id = request.args.get('id',None)
-        if not id:
-            abort(400,'Malformed Request')
-        id = int(id)
+        try:
+            id = int(request.args.get('id',None))
+        except:
+            abort(400, 'Malformed request')
         p = db.select('POST').where(id=id).execute()
         if not p:
             abort(400,'Malformed Request')
         return format_post(p)
 
-@posts.route('/like')
+@posts.route('/like', strict_slashes=False)
 class Like(Resource):
     @posts.response(200, 'Success')
     @posts.response(403, 'Invalid Auth Token')
@@ -177,8 +182,9 @@ class Like(Resource):
     ''')
     def put(self):
         u = authorize(request)
-        id = int(request.args.get('id',None))
-        if not id:
+        try:
+            id = int(request.args.get('id',None))
+        except:
             abort(400, 'Malformed request')
         if not db.exists('POST').where(id=id):
             abort(400, 'Malformed request')
@@ -191,7 +197,7 @@ class Like(Resource):
             'message': 'success'
         }
 
-@posts.route('/unlike')
+@posts.route('/unlike', strict_slashes=False)
 class Unlike(Resource):
     @posts.response(200, 'Success')
     @posts.response(403, 'Invalid Auth Token')
@@ -208,8 +214,11 @@ class Unlike(Resource):
     ''')
     def put(self):
         u = authorize(request)
-        id = int(request.args.get('id',None))
-        if not id or not db.exists('POST').where(id=id):
+        try:
+            id = int(request.args.get('id',None))
+        except:
+            abort(400, 'Malformed request')
+        if not db.exists('POST').where(id=id):
             abort(400, 'Malformed request')
         p = db.select('POST').where(id=id).execute()
         likes = text_list_to_set(p[4],process_f=lambda x: int(x))
@@ -220,7 +229,7 @@ class Unlike(Resource):
             'message': 'success'
         }
 
-@posts.route('/comment')
+@posts.route('/comment', strict_slashes=False)
 class Comment(Resource):
     @posts.response(200, 'Success')
     @posts.response(403, 'Invalid Auth Token')
@@ -239,8 +248,11 @@ class Comment(Resource):
     def put(self):
         u = authorize(request)
         j = request.json
-        id = int(request.args.get('id',None))
-        if not id or not j:
+        try:
+            id = int(request.args.get('id',None))
+        except:
+            abort(400, 'Malformed request')
+        if not j:
             abort(400, 'Malformed request')
         if not db.exists('POST').where(id=id):
             abort(400, 'Malformed request')

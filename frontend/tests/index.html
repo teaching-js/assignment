@@ -208,6 +208,53 @@
                 });
 
             });
+            describe('DUMMY', function() {
+                it('PUT /dummy/user/', function() {
+                    return fetch(`${API_URL}/dummy/user/`, {
+                        method: 'PUT',
+                        body: JSON.stringify({
+                          "name": String(new Date().getMinutes())
+                        }),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    }).then(response => {
+                        chai.expect(response.status).to.equal(200);
+                    })
+                });
+
+                it('GET /dummy/user', function() {
+                    return fetch(`${API_URL}/dummy/user`, {
+                        method: 'GET'
+                    }).then(response => {
+                        chai.expect(response.status).to.equal(200);
+                        return response.json();
+                    }).then(j => {
+                      chai.expect(j.name).to.equal(String(new Date().getMinutes()));
+                    })
+                });
+                it('PUT /dummy/user/follow', function() {
+                    return fetch(`${API_URL}/dummy/user/follow?username=Sophia`, {
+                        method: 'PUT'
+                    }).then(response => {
+                        chai.expect(response.status).to.equal(200);
+                    })
+                });
+                it('PUT /dummy/user/unfollow', function() {
+                    return fetch(`${API_URL}/dummy/user/unfollow?username=Sophia`, {
+                        method: 'PUT'
+                    }).then(response => {
+                        chai.expect(response.status).to.equal(200);
+                    })
+                });
+                it('PUT /dummy/user/unfollow (non existant username)', function() {
+                    return fetch(`${API_URL}/dummy/user/unfollow?username=Sophia`, {
+                        method: 'PUT'
+                    }).then(response => {
+                        chai.expect(response.status).to.equal(200);
+                    })
+                });
+            });
             // run tests
             mocha.run();
         </script>
