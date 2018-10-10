@@ -22,22 +22,66 @@
 
             // all these tests should return 400 requests
             // as long as they're not 500 we're okay.
-            describe('Basic GETs', function() {
+            describe('Basic GETs and POSTs', function() {
                 it('/user', function() {
-                    return fetch(`${API_URL}/user`).then(response => {
-                        chai.assert(response.status < 500 && !response.ok);
+                    return fetch(`${API_URL}/user/`).then(response => {
+                        chai.expect(response.status).to.equal(403);
                     })
                 });
 
                 it('/post', function() {
-                    return fetch(`${API_URL}/post`).then(response => {
-                        chai.assert(response.status < 500 && !response.ok);
+                    return fetch(`${API_URL}/post/`).then(response => {
+                        chai.expect(response.status).to.equal(403);
+                    })
+                });
+
+                it('/post?id=1', function() {
+                    return fetch(`${API_URL}/post?id=1`).then(response => {
+                        chai.expect(response.status).to.equal(403);
                     })
                 });
 
                 it('/user/feed', function() {
                     return fetch(`${API_URL}/user/feed`).then(response => {
-                        chai.assert(response.status < 500 && !response.ok);
+                        chai.expect(response.status).to.equal(403);
+                    })
+                });
+
+                it('/post', function() {
+                    return fetch(`${API_URL}/post/`, {
+                        method: 'POST',
+                        body: JSON.stringify({})
+                    }).then(response => {
+                        chai.expect(response.status).to.equal(403);
+                    })
+                });
+            });
+
+            describe('Basic GETs and POSTs', function() {
+                it('/user', function() {
+                    return fetch(`${API_URL}/user/`).then(response => {
+                        chai.expect(response.status).to.equal(403);
+                    })
+                });
+
+                it('/post', function() {
+                    return fetch(`${API_URL}/post/`).then(response => {
+                        chai.expect(response.status).to.equal(403);
+                    })
+                });
+
+                it('/user/feed', function() {
+                    return fetch(`${API_URL}/user/feed`).then(response => {
+                        chai.expect(response.status).to.equal(403);
+                    })
+                });
+
+                it('/post', function() {
+                    return fetch(`${API_URL}/post/`, {
+                        method: 'POST',
+                        body: JSON.stringify({})
+                    }).then(response => {
+                        chai.expect(response.status).to.equal(403);
                     })
                 });
             });
@@ -47,31 +91,74 @@
                 it('/auth/login', function() {
                     return fetch(`${API_URL}/auth/login`, {
                         method: 'POST',
-                        body: JSON.stringify({})
+                        body: JSON.stringify({}),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
                     })
                     .then(response => {
-                        chai.assert(response.status < 500 && !response.ok);
+                        chai.expect(response.status).to.equal(400);
+                    })
+                });
+
+                it('bad creds /auth/login', function() {
+                    return fetch(`${API_URL}/auth/login`, {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            username: 'Jeff',
+                            password: 'Smith'
+                        }),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(response => {
+                        chai.expect(response.status).to.equal(403);
+                    })
+                });
+
+                it('valid /auth/signup', function() {
+                    return fetch(`${API_URL}/auth/signup`, {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            username: `Jeff${Math.random()*2500}`,
+                            password: 'GoldblumSecure',
+                            name: 'Jeff',
+                            email: 'jeff@jurassicparklovers.com'
+                        }),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(response => {
+                        chai.expect(response.status).to.equal(200);
                     })
                 });
 
                 it('/auth/signup', function() {
                     return fetch(`${API_URL}/auth/signup`, {
                         method: 'POST',
-                        body: JSON.stringify({})
+                        body: {
+                            username: 'Jeff',
+                            password: 'GoldblumSecure'
+                        },
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
                     })
                     .then(response => {
-                        chai.assert(response.status < 500 && !response.ok);
+                        chai.expect(response.status).to.equal(400);
                     })
                 });
             });
 
-            describe('PUTs/POSTs', function() {
-                it('/user', function() {
+            describe('PUT', function() {
+                it('/user/', function() {
                     return fetch(`${API_URL}/user/`, {
                         method: 'PUT',
-                        body: JSON.stringify({})
+                        body: JSON.stringify({}),
                     }).then(response => {
-                        chai.assert(response.status < 500 && !response.ok);
+                        chai.expect(response.status).to.equal(403);
                     })
                 });
 
@@ -80,18 +167,46 @@
                         method: 'PUT',
                         body: JSON.stringify({})
                     }).then(response => {
-                        chai.assert(response.status < 500 && !response.ok);
+                        chai.expect(response.status).to.equal(403);
                     })
                 });
 
-                it('/post', function() {
-                    return fetch(`${API_URL}/post/`, {
-                        method: 'POST',
+                it('/user/unfollow', function() {
+                    return fetch(`${API_URL}/user/unfollow`, {
+                        method: 'PUT',
                         body: JSON.stringify({})
                     }).then(response => {
-                        chai.assert(response.status < 500 && !response.ok);
+                        chai.expect(response.status).to.equal(403);
                     })
                 });
+
+                it('/post/comment', function() {
+                    return fetch(`${API_URL}/post/comment`, {
+                        method: 'PUT',
+                        body: JSON.stringify({})
+                    }).then(response => {
+                        chai.expect(response.status).to.equal(403);
+                    })
+                });
+
+                it('/post/like', function() {
+                    return fetch(`${API_URL}/post/like`, {
+                        method: 'PUT',
+                        body: JSON.stringify({})
+                    }).then(response => {
+                        chai.expect(response.status).to.equal(403);
+                    })
+                });
+
+                it('/post/unlike', function() {
+                    return fetch(`${API_URL}/post/unlike`, {
+                        method: 'PUT',
+                        body: JSON.stringify({})
+                    }).then(response => {
+                        chai.expect(response.status).to.equal(403);
+                    })
+                });
+
             });
             // run tests
             mocha.run();

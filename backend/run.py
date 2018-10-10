@@ -4,4 +4,4 @@ import namespaces.auth
 import namespaces.user
 import namespaces.dummy
 
-app.run(debug=False)
+app.run(debug=True)
