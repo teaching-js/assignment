@@ -3,8 +3,8 @@ const API_URL = 'http://localhost:8080/data'
 
 const getJSON = (path, options) => 
     fetch(path, options)
-        .then(res => res.json()
-        .catch(err => console.warn(`API_ERROR: ${err.message}`)));
+        .then(res => res.json())
+        .catch(err => console.warn(`API_ERROR: ${err.message}`));
 
 /**
  * This is a sample class API which you may base your code on.
