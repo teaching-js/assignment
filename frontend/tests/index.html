@@ -20,25 +20,28 @@
             // Assumes api is running on localhost:5000
             const API_URL = 'http://localhost:5000'
 
+            // all these tests should return 400 requests
+            // as long as they're not 500 we're okay.
             describe('Basic GETs', function() {
                 it('/user', function() {
                     return fetch(`${API_URL}/user`).then(response => {
-                        chai.assert(response.ok);
+                        chai.assert(response.status < 500 && !response.ok);
                     })
                 });
 
                 it('/post', function() {
                     return fetch(`${API_URL}/post`).then(response => {
-                        chai.assert(response.ok);
+                        chai.assert(response.status < 500 && !response.ok);
                     })
                 });
 
-                it('should work', function() {
+                it('/user/feed', function() {
                     return fetch(`${API_URL}/user/feed`).then(response => {
-                        chai.assert(response.ok);
+                        chai.assert(response.status < 500 && !response.ok);
                     })
                 });
             });
+
 
             describe('Auth Routes', function() {
                 it('/auth/login', function() {
@@ -47,27 +50,28 @@
                         body: JSON.stringify({})
                     })
                     .then(response => {
-                        chai.assert(response.ok);
+                        chai.assert(response.status < 500 && !response.ok);
                     })
                 });
 
                 it('/auth/signup', function() {
                     return fetch(`${API_URL}/auth/signup`, { 
-                        method: 'POST', body: JSON.stringify({}) 
+                        method: 'POST',
+                        body: JSON.stringify({}) 
                     })
                     .then(response => {
-                        chai.assert(response.ok);
+                        chai.assert(response.status < 500 && !response.ok);
                     })
                 });
             });
 
             describe('PUTs/POSTs', function() {
                 it('/user', function() {
-                    return fetch(`${API_URL}/user`, {
+                    return fetch(`${API_URL}/user/`, {
                         method: 'PUT',
                         body: JSON.stringify({})
                     }).then(response => {
-                        chai.assert(response.ok);
+                        chai.assert(response.status < 500 && !response.ok);
                     })
                 });
 
@@ -76,16 +80,16 @@
                         method: 'PUT',
                         body: JSON.stringify({})
                     }).then(response => {
-                        chai.assert(response.ok);
+                        chai.assert(response.status < 500 && !response.ok);
                     })
                 });
 
-                it('should work', function() {
+                it('/post', function() {
                     return fetch(`${API_URL}/post`, {
                         method: 'POST',
                         body: JSON.stringify({})
                     }).then(response => {
-                        chai.assert(response);
+                        chai.assert(response.status < 500 && !response.ok);
                     })
                 });
             });
