@@ -22,7 +22,7 @@ python3 app.py
 
 ## Frontend
 
-The frontend can initially be used without the dev server; it provides some sample data 
+The frontend can initially be used without the dev server; it provides some sample data
 for initial testing and usage. Once you get going though you'll need to change the url
 to match the url of the backend API.
 
@@ -36,5 +36,3 @@ npm start
 ```
 
 See Frontend README for more details.
-
-
