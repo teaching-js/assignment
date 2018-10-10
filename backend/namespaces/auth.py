@@ -17,6 +17,8 @@ class Login(Resource):
         to verify the user.
     ''')
     def post(self):
+        if not request.json:
+            abort(400,'Malformed Request')
         (un,ps) = unpack(request.json,'username','password')
         if not db.exists('USER').where(username=un,password=ps):
             abort(403,'Invalid Username/Password')
@@ -40,6 +42,8 @@ class Signup(Resource):
         After creation api retuns a auth token, same as /login would
     ''')
     def post(self):
+        if not request.json:
+            abort(400,'Malformed Request')
         (un,ps,em,n) = unpack(request.json,'username','password','email','name')
 
         if db.exists('USER').where(username=un):

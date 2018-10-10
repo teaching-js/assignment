@@ -45,7 +45,7 @@
 
             describe('Auth Routes', function() {
                 it('/auth/login', function() {
-                    return fetch(`${API_URL}/auth/login`, { 
+                    return fetch(`${API_URL}/auth/login`, {
                         method: 'POST',
                         body: JSON.stringify({})
                     })
@@ -55,9 +55,9 @@
                 });
 
                 it('/auth/signup', function() {
-                    return fetch(`${API_URL}/auth/signup`, { 
+                    return fetch(`${API_URL}/auth/signup`, {
                         method: 'POST',
-                        body: JSON.stringify({}) 
+                        body: JSON.stringify({})
                     })
                     .then(response => {
                         chai.assert(response.status < 500 && !response.ok);
@@ -85,7 +85,7 @@
                 });
 
                 it('/post', function() {
-                    return fetch(`${API_URL}/post`, {
+                    return fetch(`${API_URL}/post/`, {
                         method: 'POST',
                         body: JSON.stringify({})
                     }).then(response => {
