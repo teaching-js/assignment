@@ -1,0 +1,6 @@
+Click==7.0
+Flask==1.0.2
+itsdangerous==0.24
+MarkupSafe==1.0
+Werkzeug==0.14.1
+flask-restplus==0.12.1

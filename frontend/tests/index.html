@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!-- styling for the test results -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mocha/3.1.0/mocha.min.css" />
+    </head>
+    <body>
+        <!-- container that will display test results -->
+        <div id="mocha"></div>
+
+        <!-- mocha (test runner) -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mocha/3.1.0/mocha.min.js"></script>
+
+        <!-- chai (assertion library) -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/chai/3.5.0/chai.min.js"></script>
+
+        <script>
+            // setup test helpers
+            mocha.setup('bdd');
+            // Assumes api is running on localhost:5000
+            const API_URL = 'http://localhost:5000'
+
+            describe('Basic GETs', function() {
+                it('/user/', function() {
+                    return fetch(`${API_URL}/user`).then(response => {
+                        chai.assert(response.ok);
+                    })
+                });
+
+                it('/post', function() {
+                    return fetch(`${API_URL}/post`).then(response => {
+                        chai.assert(response.ok);
+                    })
+                });
+
+                it('should work', function() {
+                    return fetch(`${API_URL}/user/feed`).then(response => {
+                        chai.assert(response.ok);
+                    })
+                });
+            });
+
+            describe('Complex PUTs', function() {
+                it('/user/', function() {
+                    return fetch(`${API_URL}/user`, {
+                        method: 'PUT'
+                    }).then(response => {
+                        chai.assert(response.ok);
+                    })
+                });
+
+                it('/user/', function() {
+                    return fetch(`${API_URL}/user/follow`, {
+                        method: 'PUT'
+                    }).then(response => {
+                        chai.assert(response.ok);
+                    })
+                });
+
+                it('should work', function() {
+                    return fetch(`${API_URL}/post`, {
+                        method: 'POST'
+                    }).then(response => {
+                        chai.assert(response);
+                    })
+                });
+            });
+            // run tests
+            mocha.run();
+        </script>
+    </body>
+</html>

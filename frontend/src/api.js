@@ -1,21 +1,27 @@
-// change this when you integrate with the real API
-const API_URL = 'https://teaching-js.github.io/assignment/data'
+// change this when you integrate with the real API, or when u start using the dev server
+const API_URL = 'http://localhost:8080/data'
 
 const getJSON = (path, options) => 
-    fetch(path, options).then(res => res.json());
+    fetch(path, options)
+        .then(res => res.json()
+        .catch(err => console.warn(`API_ERROR: ${err.message}`)));
 
 /**
  * This is a sample class API which you may base your code on.
+ * You don't have to do this as a class.
  */
 export default class API {
 
-    constructor(url = API_URL, credentials = {}) {
+    /**
+     * Defaults to teh API URL
+     * @param {string} url 
+     */
+    constructor(url = API_URL) {
         this.url = url;
-        this.credentials = credentials;
     } 
 
     makeAPIRequest(path) {
-        return getJSON(`${this.url}/${path}`, this.credentials);
+        return getJSON(`${this.url}/${path}`);
     }
 
     /**
@@ -31,6 +37,5 @@ export default class API {
     getMe() {
         return this.makeAPIRequest('me.json');
     }
-
 
 }
