@@ -5,6 +5,7 @@ from flask_restplus import Resource, abort, reqparse, fields
 from PIL import Image
 from io import BytesIO
 import base64
+import time
 
 posts = api.namespace('post', description='Post Services')
 
@@ -43,7 +44,7 @@ class Post(Resource):
         db.insert('POST').with_values(
             author=u_username,
             description=desc,
-            published=datetime.now(),
+            published=str(time.time()),
             likes='',
             thumbnail=thumbnail,
             src=src
@@ -246,7 +247,7 @@ class Comment(Resource):
         comment_id = db.insert('COMMENT').with_values(
             comment=comment,
             author=u[1],
-            published=datetime.now()
+            published=str(time.time())
         ).execute()
         p = db.select('POST').where(id=id).execute()
         comment_list = get_text_list(p[7],process_f=lambda x: int(x))
