@@ -3,4 +3,4 @@ import namespaces.post
 import namespaces.auth
 import namespaces.user
 
-app.run(debug=True)
+app.run(debug=False)
