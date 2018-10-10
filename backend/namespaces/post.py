@@ -10,7 +10,7 @@ from flask import request
 
 posts = api.namespace('post', description='Post Services')
 
-@posts.route('/')
+@posts.route('')
 class Post(Resource):
     @posts.response(200, 'Success', post_id_details)
     @posts.response(403, 'Invalid Auth Token')
@@ -151,9 +151,10 @@ class Post(Resource):
     ''')
     def get(self):
         u = authorize(request)
-        id = int(request.args.get('id',None))
+        id = request.args.get('id',None)
         if not id:
             abort(400,'Malformed Request')
+        id = int(id)
         p = db.select('POST').where(id=id).execute()
         if not p:
             abort(400,'Malformed Request')

@@ -6,7 +6,7 @@ from flask import request
 
 user = api.namespace('user', description='User Information Services')
 
-@user.route('/')
+@user.route('')
 class User(Resource):
     @user.response(200, 'Success', user_details)
     @user.response(403, 'Invalid Auth Token')
