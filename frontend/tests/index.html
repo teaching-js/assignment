@@ -22,19 +22,19 @@
 
             describe('Basic GETs', function() {
                 it('/user/', function() {
-                    return fetch(`${API_URL}/user`).then(response => {
+                    return fetch(`${API_URL}/user/`).then(response => {
                         chai.assert(response.ok);
                     })
                 });
 
                 it('/post', function() {
-                    return fetch(`${API_URL}/post`).then(response => {
+                    return fetch(`${API_URL}/post/`).then(response => {
                         chai.assert(response.ok);
                     })
                 });
 
                 it('should work', function() {
-                    return fetch(`${API_URL}/user/feed`).then(response => {
+                    return fetch(`${API_URL}/user/feed/`).then(response => {
                         chai.assert(response.ok);
                     })
                 });

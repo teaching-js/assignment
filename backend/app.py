@@ -60,6 +60,7 @@ class User(Resource):
     @user.response(405, 'Invalid Auth Token')
     @user.response(400, 'Malformed Request')
     @user.expect(auth_details)
+    @auth.doc(description='Get user info')
     def get(self):
         u = authorize(request)
         u_id = u[0]
