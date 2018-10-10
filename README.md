@@ -23,6 +23,7 @@ Some of the skills/concepts this assignment aims to test (and build upon):
 * Routing (URL fragment based routing)
 
 ## API
+
 The backend server will be where you'll be getting your data. Don't touch the code in the backend; although we've provided the source, 
 it's meant to be a black box. Final testing will be done with our own backend. Use the instructions provided in the backend/README.md
 to get it started.
