@@ -1,15 +1,6 @@
-from flask import Flask, request
-from flask_restplus import Resource, Api, abort, reqparse, fields
-from util.DB_Interface import DB
-from flask_cors import CORS
 import secrets
 
-app = Flask(__name__)
-CORS(app)
-api = Api(app)
-db = DB()
-
-def unpack(j,*args,**kargs):    
+def unpack(j,*args,**kargs):
     r = [j.get(arg,None) for arg in args]
     if kargs.get("required",True):
         [abort(kargs.get("error",400)) for e in r if e == None]

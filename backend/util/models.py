@@ -1,4 +1,4 @@
-from globals import api
+from app import api
 from flask_restplus import fields
 
 comment_details = api.model('comment_details',{
@@ -44,7 +44,7 @@ user_details = api.model('user_details', {
     'username': fields.String(example='xX_greginator_Xx'),
     'email': fields.String(example='greg@fred.com'),
     'name':  fields.String(example='greg'),
-    'posts': fields.List(fields.Nested(post_details)),
+    'posts': fields.List(fields.Integer(min=0)),
     'following': fields.List(fields.Integer(min=0)),
     'followed_num': fields.Integer(min=0)
 })
@@ -60,4 +60,4 @@ signup_details = api.model('signup_details', {
   'name':  fields.String(required=True, example='greg')
 })
 
-auth_details = api.parser().add_argument('Authorization', help="Your Authorization Token in the form Token <AUTH_TOKEN>",location='headers')
+auth_details = api.parser().add_argument('Authorization', help="Your Authorization Token in the form 'Token <AUTH_TOKEN>'",location='headers')
