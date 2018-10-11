@@ -40,7 +40,7 @@ class Post(Resource):
             im.thumbnail(size, Image.ANTIALIAS)
             buffered = BytesIO()
             im.save(buffered, format='PNG')
-            thumbnail = str(base64.b64encode(buffered.getvalue()))
+            thumbnail = base64.b64encode(buffered.getvalue()).decode("utf-8")
         except:
             abort(400,'Image Data Could Not Be Processed')
         post_id=db.insert('POST').with_values(
