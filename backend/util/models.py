@@ -7,6 +7,10 @@ comment_details = api.model('comment_details',{
     "comment": fields.String()
 })
 
+token_details = api.model('token_details',{
+    'token': fields.String()
+})
+
 post_id_details = api.model('post_id_details',{
     "post_id": fields.String()
 })

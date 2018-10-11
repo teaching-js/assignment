@@ -5,9 +5,9 @@ from flask_restplus import Resource, abort, reqparse, fields
 from flask import request
 auth = api.namespace('auth', description='Authentication Services')
 
-@auth.route('/login')
+@auth.route('/login', strict_slashes=False)
 class Login(Resource):
-    @auth.response(200, 'Success')
+    @auth.response(200, 'Success',token_details)
     @auth.response(400, 'Missing Username/Password')
     @auth.response(403, 'Invalid Username/Password')
     @auth.expect(login_details)
@@ -26,13 +26,12 @@ class Login(Resource):
         db_r = db.update('USER').set(curr_token=t).where(username=un)
         db_r.execute()
         return {
-            'msg': 'success',
             'token': t
         }
 
-@auth.route('/signup')
+@auth.route('/signup', strict_slashes=False)
 class Signup(Resource):
-    @auth.response(200, 'Success')
+    @auth.response(200, 'Success',token_details)
     @auth.response(400, 'Malformed Request')
     @auth.response(409, 'Username Taken')
     @api.expect(signup_details)
@@ -61,6 +60,5 @@ class Signup(Resource):
         )
         db_r.execute()
         return {
-            'message': 'success',
             'token': t
         }

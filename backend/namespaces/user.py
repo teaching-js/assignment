@@ -6,7 +6,7 @@ from flask import request
 
 user = api.namespace('user', description='User Information Services')
 
-@user.route('/')
+@user.route('/', strict_slashes=False)
 class User(Resource):
     @user.response(200, 'Success', user_details)
     @user.response(403, 'Invalid Auth Token')
@@ -74,7 +74,7 @@ class User(Resource):
         return {
             "msg": "success"
         }
-@user.route('/feed')
+@user.route('/feed', strict_slashes=False)
 class Feed(Resource):
     @user.response(403, 'Invalid Auth Token')
     @user.response(200, 'Success', post_list_details)
@@ -111,7 +111,7 @@ class Feed(Resource):
             'posts': all_posts
         }
 
-@user.route('/follow')
+@user.route('/follow', strict_slashes=False)
 class Follow(Resource):
     @user.response(200, 'Success')
     @user.response(403, 'Invalid Auth Token')
@@ -141,7 +141,7 @@ class Follow(Resource):
             'message': 'success'
         }
 
-@user.route('/unfollow')
+@user.route('/unfollow', strict_slashes=False)
 class UnFollow(Resource):
     @user.response(200, 'Success')
     @user.response(403, 'Invalid Auth Token')

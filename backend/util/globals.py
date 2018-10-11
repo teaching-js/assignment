@@ -27,7 +27,7 @@ def authorize(r):
     return db.select("USER").where(curr_token=t).execute()
 
 def get_dummy_user():
-    return db.select("USER").where(id=0).execute()
+    return db.select("USER").where(id=1).execute()
 
 def text_list_to_set(raw,process_f=lambda x:x):
     if raw == None:
